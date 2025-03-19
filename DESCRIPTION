@@ -1,0 +1,40 @@
+Package: cme.mdp
+Type: Package
+Title: Clean and Analyze Chicago Mercantile Exchange Market Data 
+Version: 0.1.0
+Authors@R: c(
+    person(
+      "Richie", "Ma",
+      email = "ruchuan2@illinois.edu",
+      role = c("aut", "cre")
+    ),
+    person(
+    "Brian", "Peterson",
+    email = "brian@braverock.com",
+    role = c("aut")
+    )
+  )
+Description: Retrieve, manage and clean tick-level Market by Price (MBP) 
+    and Market by Order (MBO) data of trades and quotes from the Chicago 
+    Mercantile Exchange Market Data Platform 3.0, reconstruct outright, implied, 
+    and consolidated limit order books from the MBP message data, retrieve 
+    daily and session statistics, and security status, 
+    and calculate various market liquidity measures.
+URL: https://github.com/richie-ma
+License: GPL (>= 3)
+Depends:
+    R (>= 3.5.0),
+    data.table
+Imports:
+    highfrequency,
+    stringr,
+    ggplot2,
+    gganimate (>= 1.0.9),
+    ggnewscale (>= 0.5.1),
+    scales
+Encoding: UTF-8
+LazyData: true
+Suggests: 
+    testthat (>= 3.0.0)
+Config/testthat/edition: 3
+RoxygenNote: 7.3.2
