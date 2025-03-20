@@ -14,6 +14,9 @@
 #' @param consolidate If \code{TRUE} (default), return the consolidated order book.
 #' @param sunday_input When \code{level} is not provided, the nearest Sunday's (not a national holiday)
 #' MBP/MBO data need to be provided to extract the default depth.
+#' @param security A symbol of a single contract of a financial security or a vector of multiple single contracts, should be
+#' in the format like "CLK9" (crude oil), "ESH9" (E-mini S&P 500), etc. These can
+#' be obtained from CME website for a contract specification.
 #'
 #' @returns A list of outright, implied, and consolidated (if \code{consolidate} = \code{TRUE})
 #' limit order books for all tradeable contracts in a trading day stored in a list.
@@ -25,6 +28,11 @@
 #' One should store all quote messages extracted from the MBP data including Sunday's file
 #' in a list because CME disseminates the initial snapshot of the book on Sunday. To ensure the
 #' accuracy of book reconstruction, the Sunday's file is needed.
+#'
+#' @section Processing specific contract(s):
+#' In practice, users might not need to process the limit order books of all tradable contracts,
+#' which is substantially time-consuming. This function provides a way to only reconstruct the
+#' limit order book of a single or multiple trade contracts.
 #'
 #' @section Limit order book reconstruction:
 #' Outright limit order book and implied limit order book are reconstructed separately at first
@@ -54,7 +62,7 @@
 #' # Unknown book depth
 #' book <- order_book(weekly_msg_quotes_list, "2019-01-07", level = 10, sunday_input = sunday_file)
 #' }
-order_book <- function(mdp_quote_msgs_list,  level=NULL, consolidate=TRUE,  sunday_input=NULL){
+order_book <- function(mdp_quote_msgs_list,  level=NULL, consolidate=TRUE,  sunday_input=NULL, security = NULL){
 
 
   Date <- Code <- Implied <- Symbol  <- MarketDepth <- Seq <- NULL
@@ -68,10 +76,25 @@ order_book <- function(mdp_quote_msgs_list,  level=NULL, consolidate=TRUE,  sund
 
   }
 
+  if(is.null(security)){
+
     message_all <-  split(rbindlist(lapply(mdp_quote_msgs_list, rbindlist)), by="Code")
+
+  }else{
+
+    message_all <-  split(rbindlist(lapply(mdp_quote_msgs_list, rbindlist)), by="Code")[security]
+
+    if(length(list)==0){
+      stop('Cannot find the security in the data input')
+    }
+  }
+
     rm(mdp_quote_msgs_list)
 
+
     message_all <- lapply(message_all, unique)
+
+
 
 
     cat("Starting limit order book processing...\n")
@@ -98,6 +121,11 @@ order_book <- function(mdp_quote_msgs_list,  level=NULL, consolidate=TRUE,  sund
     ## outright order book
 
     if(is.null(level)){
+
+      if(is.null(sunday_input)){
+
+        stop("Sunday input is needed when level is not given")
+      }
 
       definition <- meta_data(sunday_input, date=date)
       level <- definition[Symbol==messages[, unique(Code)], unique(MarketDepth)]
@@ -155,7 +183,7 @@ order_book <- function(mdp_quote_msgs_list,  level=NULL, consolidate=TRUE,  sund
             column_index3 <- which(colnames(LOB)==column_name3)
 
             ## not the last order
-            if(column_index1>5){
+            if(column_index1>=5){
 
               if (k==1){
 
@@ -214,7 +242,7 @@ order_book <- function(mdp_quote_msgs_list,  level=NULL, consolidate=TRUE,  sund
             column_index2 <- which(colnames(LOB)==column_name2)
             column_index3 <- which(colnames(LOB)==column_name3)
 
-            if(column_index1<62){
+            if(column_index1<=62){
 
               if(k==1){
 
@@ -436,15 +464,13 @@ order_book <- function(mdp_quote_msgs_list,  level=NULL, consolidate=TRUE,  sund
     if(isTRUE(consolidate)){
       cat("Consolidated limit order book start...\n")
 
-      if(exists("LOB_outright") | exists("LOB_implied")){
-
-      if(exists("LOB_outright") & dim(LOB_outright)[1]!=0 & exists("LOB_implied")==FALSE){
+      if((exists("LOB_outright")==TRUE) & (exists("LOB_implied")==FALSE)){
 
         LOB_conso <- as.data.table(LOB_outright)
         LOB_implied <- NULL
         cat("No implied orders and the consolidated limit order book is the same as the outright limit order book\n")
 
-      }else if(exists("LOB_implied") & dim(LOB_implied)[1]!=0 & exists("LOB_outright")==FALSE){
+      }else if((exists("LOB_outright")==FALSE) & (exists("LOB_implied")==TRUE)){
 
           LOB_conso <- as.data.table(LOB_implied)
           LOB_outright <- NULL
@@ -714,12 +740,10 @@ order_book <- function(mdp_quote_msgs_list,  level=NULL, consolidate=TRUE,  sund
     }
      LOB_conso$Seq <- messages[, "Seq"]
      LOB_conso$MsgSeq <- messages[, "MsgSeq"]
-     LOB_conso$Date <- messages[, "Date"]
-     LOB_conso[, Date:=as.Date(Date, "%Y%m%d")]
      LOB_conso$SendingTime <- messages[, "SendingTime"]
      LOB_conso$TransactTime <- messages[, "TransactTime"]
      LOB_conso$Code <- messages[, "Code"]
-
+     setcolorder(LOB_conso, "SendingTime", before = "TransactTime")
 
     return(LOB_conso)
 
@@ -730,7 +754,7 @@ order_book <- function(mdp_quote_msgs_list,  level=NULL, consolidate=TRUE,  sund
    LOB_conso <- consolidated_book(LOB_implied, LOB_outright)
 
     }
-      }
+
       }else{
 
       LOB_conso <- NULL
@@ -741,25 +765,24 @@ order_book <- function(mdp_quote_msgs_list,  level=NULL, consolidate=TRUE,  sund
 
    LOB_outright$Seq <- message_outright[, "Seq"]
    LOB_outright$MsgSeq <- message_outright[, "MsgSeq"]
-   LOB_outright$Date <- message_outright[, "Date"]
-   LOB_outright[, Date:=as.Date(Date, "%Y%m%d")]
    LOB_outright$SendingTime <- message_outright[, "SendingTime"]
    LOB_outright$TransactTime <- message_outright[, "TransactTime"]
    LOB_outright$Code <- message_outright[, "Code"]
+   setcolorder(LOB_outright, "SendingTime", before = "TransactTime")
 
    }
 
    if(exists("LOB_implied")){
    LOB_implied$Seq <- message_implied[, "Seq"]
    LOB_implied$MsgSeq <- message_implied[, "MsgSeq"]
-   LOB_implied$Date <- message_implied[, "Date"]
-   LOB_implied[, Date:=as.Date(Date, "%Y%m%d")]
    LOB_implied$SendingTime <- message_implied[, "SendingTime"]
    LOB_implied$TransactTime <- message_implied[, "TransactTime"]
    LOB_implied$Code <- message_implied[, "Code"]
+   setcolorder(LOB_implied, "SendingTime", before = "TransactTime")
    }
 
    results <- list(LOB_conso=LOB_conso, LOB_outright=LOB_outright, LOB_implied=LOB_implied)
+
 
    return(results)
     }

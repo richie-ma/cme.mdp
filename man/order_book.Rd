@@ -8,7 +8,8 @@ order_book(
   mdp_quote_msgs_list,
   level = NULL,
   consolidate = TRUE,
-  sunday_input = NULL
+  sunday_input = NULL,
+  security = NULL
 )
 }
 \arguments{
@@ -22,6 +23,10 @@ MBP/MBO data need to be provided to extract the default depth.}
 
 \item{sunday_input}{When \code{level} is not provided, the nearest Sunday's (not a national holiday)
 MBP/MBO data need to be provided to extract the default depth.}
+
+\item{security}{A symbol of a single contract of a financial security or a vector of multiple single contracts, should be
+in the format like "CLK9" (crude oil), "ESH9" (E-mini S&P 500), etc. These can
+be obtained from CME website for a contract specification.}
 }
 \value{
 A list of outright, implied, and consolidated (if \code{consolidate} = \code{TRUE})
@@ -39,6 +44,13 @@ to 2 depths, according the CME definition.
 One should store all quote messages extracted from the MBP data including Sunday's file
 in a list because CME disseminates the initial snapshot of the book on Sunday. To ensure the
 accuracy of book reconstruction, the Sunday's file is needed.
+}
+
+\section{Processing specific contract(s)}{
+
+In practice, users might not need to process the limit order books of all tradable contracts,
+which is substantially time-consuming. This function provides a way to only reconstruct the
+limit order book of a single or multiple trade contracts.
 }
 
 \section{Limit order book reconstruction}{
