@@ -29,12 +29,12 @@ Imports:
     highfrequency,
     stringr,
     ggplot2,
-    gganimate (>= 1.0.9),
     ggnewscale (>= 0.5.1),
     scales
 Encoding: UTF-8
 LazyData: true
 Suggests: 
+    gganimate (>= 1.0.9),
     testthat (>= 3.0.0)
 Config/testthat/edition: 3
 RoxygenNote: 7.3.2

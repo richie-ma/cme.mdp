@@ -20,7 +20,7 @@
 #' plot (if \code{animation = TRUE}).
 #' @export
 #'
-#' @import data.table ggplot2 gganimate ggnewscale stringr
+#' @import data.table ggplot2 ggnewscale stringr
 #'
 #' @section Data recommendation:
 #' One would better use resampled data instead of tick-level data to reduce the load
@@ -50,7 +50,8 @@
    Ask_Qty_4  <- Ask_Ord_4  <- Ask_PX_5  <-  Ask_Qty_5  <- Ask_Ord_5  <- Ask_PX_6   <- Ask_Qty_6  <-  Ask_Ord_6  <- Ask_PX_7  <-  Ask_Qty_7  <- Ask_Ord_7  <-
    Ask_PX_8   <- Ask_Qty_8  <- Ask_Ord_8  <- Ask_PX_9  <-  Ask_Qty_9   <-Ask_Ord_9 <-  Ask_PX_10  <- Ask_Qty_10  <-Ask_Ord_10  <- MsgSeq   <- NULL
 
-   fields <- side <- depth <- values <- px <- Q <- O <- cum_Q <- type <- NULL
+   fields <- side <- depth <- values <- px <- Q <- O <- cum_Q <- type <- anim_book_plot <-
+     transition_time <- view_follow<- ease_aes <- animate <- NULL
 
 
    if (is.data.table(mbp_order_book)){
@@ -257,6 +258,7 @@
 
   if(isTRUE(animation)){
 
+    stopifnot("package:gganimate" %in% search() || requireNamespace("gganimate", quietly = TRUE))
 
 
     anim_book_plot <- function(data,...){
