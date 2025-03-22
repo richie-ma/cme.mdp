@@ -6,7 +6,38 @@
 <!-- badges: start -->
 <!-- badges: end -->
 
-The goal of cme.mdp is to …
+The goal of cme.mdp is to clean Chicago Mercantile Exchange (CME) market
+data with FIX protocol more easily in the R environment, including but
+not limited to trade summaries, quote updates, and limit order book
+reconstruction.
+
+Financial markets have become more transparent and exchanges can provide
+high-frequency data for traders to better monitor markets, which creates
+more demand about the high-frequency data usage both in the academia and
+industry. Most exchanges do not disseminate tabulated complete market
+data to non-member market participants, and almost all market data are
+specially coded to enhance the communication efficiency. Thus, financial
+economists need to know how to clean these untabulated data at first,
+which is a substantially time-consuming task. This project will closely
+focus on how to parse and clean the market data of Chicago Mercantile
+Exchange (CME) under the FIX and MDP protocols and provide other
+statistical procedures related to market liquidity (in later version).
+
+## CME market data overview
+
+So far, there have been Market by Price (MBP) data which aggregates all
+individual order information (e.g., size) at every price level, and
+Market by Order (MBO) data that can show all individual order details
+(e.g., order priority) at each price level. The MBO data also provide
+more information about trade summaries than the MBP, so that traders are
+able to know which limit orders are matched in each trade and their
+corresponding matching quantities. The detailed trade summaries also
+assign the trade direction more precisely than the MBP and no quote
+merge is required for almost all trades. In general, CME will
+disseminate the MBP incremental updates followed by the order-level
+details (e.g., submission, cancellation) that describes the reason for
+MBP updates. Our package considers the above characters and can process
+both the MBP and MBO data including quote messages and trade summaries.
 
 ## Installation
 
@@ -14,8 +45,8 @@ You can install the development version of cme.mdp from
 [GitHub](https://github.com/) with:
 
 ``` r
-# install.packages("pak")
-pak::pak("richie-ma/cme.mdp")
+# install.packages("devtools") #Install the 'devtools' package if you haven't
+devtools::install_github("richie-ma/cme.mdp")
 ```
 
 ## Example
@@ -25,7 +56,6 @@ This is a basic example which shows you how to solve a common problem:
 ``` r
 library(cme.mdp)
 #> Loading required package: data.table
-#> data.table 1.17.0 using 4 threads (see ?getDTthreads).  Latest news: r-datatable.com
 ## basic example code
 ```
 
