@@ -1,4 +1,5 @@
 
+
 #' Build the TBBO data from the trades and quotes data
 #'
 #' `tbbo()` builds the TBBO data where records the trade summary with best-bid-offer
@@ -28,22 +29,22 @@
 #' TBBO <- tbbo(trades, book, merge = "Seq_number", assign_trades = TRUE)
 #' }
 #'
-tbbo <- function(trades, book, merge = c("TransactTime", "Seq_number"), assign_trades = FALSE){
+tbbo <- function(trades,
+                 book,
+                 merge = c("TransactTime", "Seq_number"),
+                 assign_trades = FALSE) {
+  Date <- Seq <- Bid_PX_1 <- Bid_Qty_1 <- Bid_Ord_1 <- Ask_PX_1 <- Ask_Qty_1 <- Ask_Ord_1 <-
+    TransactTime <- agg <- PX <- NULL
 
-   Date <- Seq <- Bid_PX_1 <- Bid_Qty_1 <- Bid_Ord_1 <- Ask_PX_1 <- Ask_Qty_1 <- Ask_Ord_1 <-
-   TransactTime <- agg <- PX <- NULL
-
-  if (is.data.table(trades) & is.data.table(book)){
-
-    if(trades[, as.Date(unique(Date))] != book[, as.Date(unique(Date))]){
-
+  if (is.data.table(trades) & is.data.table(book)) {
+    if (trades[, as.Date(unique(Date))] != book[, as.Date(unique(Date))]) {
       stop('Trading dates of book and trades need to be the same')
 
     }
 
-     }else {
-      stop("Inputs have to be data.table")
-    }
+  } else {
+    stop("Inputs have to be data.table")
+  }
 
 
 
@@ -51,40 +52,61 @@ tbbo <- function(trades, book, merge = c("TransactTime", "Seq_number"), assign_t
 
   ## merged by the sequence number-- More accurate
 
-  if(merge=="Seq_number"){
-
-
-    tbbo <- book[, list(Seq, Bid_PX_1, Bid_Qty_1, Bid_Ord_1,
-                     Ask_PX_1, Ask_Qty_1, Ask_Ord_1)][trades, on = c("Seq"), roll = Inf]
-
-
-
-  }else if(merge=="TransactTime"){
-
-
-    tbbo <- book[, list(TransactTime, Bid_PX_1, Bid_Qty_1, Bid_Ord_1,
-                        Ask_PX_1, Ask_Qty_1, Ask_Ord_1)][trades, on = c("TransactTime"), roll = Inf]
+  if (merge == "Seq_number") {
+    tbbo <- book[, list(Seq,
+                        Bid_PX_1,
+                        Bid_Qty_1,
+                        Bid_Ord_1,
+                        Ask_PX_1,
+                        Ask_Qty_1,
+                        Ask_Ord_1)][trades, on = c("Seq"), roll = Inf]
 
 
 
+  } else if (merge == "TransactTime") {
+    tbbo <- book[, list(TransactTime,
+                        Bid_PX_1,
+                        Bid_Qty_1,
+                        Bid_Ord_1,
+                        Ask_PX_1,
+                        Ask_Qty_1,
+                        Ask_Ord_1)][trades, on = c("TransactTime"), roll = Inf]
 
-  }else{
 
+
+
+  } else{
     stop('Merge between trades and quotes should be either TransactTime or Seq')
 
   }
 
-  setcolorder(tbbo, c("Date", "MsgSeq", "SendingTime", "TransactTime","Code", "Seq", "PX",
-                      "Size","Ord", "agg", "Bid_PX_1", "Bid_Qty_1", "Bid_Ord_1",
-                      "Ask_PX_1", "Ask_Qty_1", "Ask_Ord_1"))
+  setcolorder(
+    tbbo,
+    c(
+      "Date",
+      "MsgSeq",
+      "SendingTime",
+      "TransactTime",
+      "Code",
+      "Seq",
+      "PX",
+      "Size",
+      "Ord",
+      "agg",
+      "Bid_PX_1",
+      "Bid_Qty_1",
+      "Bid_Ord_1",
+      "Ask_PX_1",
+      "Ask_Qty_1",
+      "Ask_Ord_1"
+    )
+  )
 
 
-  if(isTRUE(assign_trades)){
-
+  if (isTRUE(assign_trades)) {
     ### Only assign trades that are not defined by the CME
 
-    if(0 %in% tbbo[, unique(agg)] == FALSE){
-
+    if (0 %in% tbbo[, unique(agg)] == FALSE) {
       stop('All trades are defined by the CME. No need to be redefined.')
 
     }
@@ -104,23 +126,27 @@ tbbo <- function(trades, book, merge = c("TransactTime", "Seq_number"), assign_t
 
     ## quote test
     tbbo <- na.omit(tbbo)
-    tbbo <- tbbo[agg==0, agg:=fifelse(PX > (Bid_PX_1 + Ask_PX_1)/2, 1, fifelse(PX <  (Bid_PX_1 + Ask_PX_1)/2, 2, 0))]
+    tbbo <- tbbo[agg == 0, agg := fifelse(PX > (Bid_PX_1 + Ask_PX_1) / 2, 1, fifelse(PX <  (Bid_PX_1 + Ask_PX_1) /
+                                                                                       2, 2, 0))]
 
     ## tick test
 
 
 
-    repeat{
-
-      if(1 %in% tbbo[agg==0, which=TRUE]){  ## The first rwo is with agg = 0, needs to stop
+    repeat {
+      if (1 %in% tbbo[agg == 0, which = TRUE]) {
+        ## The first rwo is with agg = 0, needs to stop
         break
       }
 
-      tbbo[, agg:=fifelse(agg!=0, agg,
-                              fifelse(agg==0 & 1 == shift(agg, 1, "lag", fill=NA), 1,
-                                      fifelse(agg==0 & -1 == shift(agg, 1, "lag", fill=NA), 1, 0)))]
+      tbbo[, agg := fifelse(agg != 0, agg, fifelse(
+        agg == 0 & 1 == shift(agg, 1, "lag", fill = NA),
+        1,
+        fifelse(agg == 0 &
+                  -1 == shift(agg, 1, "lag", fill = NA), 1, 0)
+      ))]
 
-      if(tbbo[agg==0, .N]==0){
+      if (tbbo[agg == 0, .N] == 0) {
         break
       }
     }
@@ -132,4 +158,3 @@ tbbo <- function(trades, book, merge = c("TransactTime", "Seq_number"), assign_t
 
 
 }
-
