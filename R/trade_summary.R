@@ -283,6 +283,8 @@ trade_summary <- function(mbp_input,
                   ))
 
 
+    }else{
+      stop("No trade summary detected")
     }
   }  else{
     Index <- str_subset(data, "\001269=2")
@@ -373,8 +375,9 @@ trade_summary <- function(mbp_input,
           "agg"
         )
       )
-    }
-
+    }else{
+    stop("No trade summary detected")
+}
   }
 
   results <- split(trade, by = "Code")

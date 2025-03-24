@@ -312,6 +312,8 @@ mbo_match_details <- function(mbo_input,
     )
     return(MBO.Trade)
 
+  }else{
+    stop("No trade summary with order details detected")
   }
 
 
