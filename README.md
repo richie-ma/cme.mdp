@@ -276,7 +276,6 @@ animation playing speed. One example is given as below.
 
 <figure>
 <img src="man/figures/book_bar.gif" alt="Animated book" />
-<figcaption aria-hidden="true">Animated book</figcaption>
 </figure>
 
 ## Acknowledgements
