@@ -8,7 +8,7 @@ output: github_document
 knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "#>",
-  fig.path = "man/figures/README-",
+  fig.path = "man/figures/",
   out.width = "100%",
   cache = TRUE
 )
@@ -24,23 +24,9 @@ Authors: Richie R. Ma and Brian G. Peterson
 
 The goal of cme.mdp is to clean Chicago Mercantile Exchange (CME) market data with FIX protocol more easily in the R environment, including but not limited to trade summaries, quote updates, and limit order book reconstruction. 
 
+## Introduction
+
 Financial markets have become more transparent and exchanges can provide high-frequency data for traders to better monitor markets, which creates more demand about the high-frequency data usage both in the academia and industry. Most exchanges do not disseminate tabulated complete market data to non-member market participants, and almost all market data are specially coded to enhance the communication efficiency. Thus, financial economists need to know how to clean these untabulated data at first, which is a substantially time-consuming task. This project will closely focus on how to parse and clean the market data of Chicago Mercantile Exchange (CME) under the FIX and MDP protocols and provide other statistical procedures related to market liquidity (in later version).
-
-
-
-- [CME market data overview](#CME market data overview)
-- [Installation](#Installation)
-- [Trade summary: MBP and MBO](#Trade summary: MBP and MBO)
-  - [MBP trade summary](#MBP trade summary)
-  - [MBO trade summary with order details](#MBO trade summary with order details)
-- [Quote messages: MBP and MBO](#Quote messages: MBP and MBO)
-  - [MBP quote messages](#MBP quote messages)
-- [Order book](#Order book)
-  - [Reconstruction: Pseudo code](#Reconstruction: Pseudo code)
-  - [Feature: Anmiated order book visualization](#Feature: Anmiated order book visualization)
-- [Acknowledgements](#Acknowledgements)
-- [Help, Feature Requests and Bug Reports](#Help, Feature Requests and Bug Reports)
-- [References](#References)
 
 ## CME market data overview
 
@@ -106,9 +92,10 @@ CME MBP quote messages show quote updates at each book depth and all relevant or
 
 ```{r, message=FALSE}
 
-## Exapmle: corn futures on March 12, 2020
+## Example: corn futures on March 12, 2020
+## We only use a part of the original data for illustrative purposes
 
-corn_quotes <- quote_message(mbp_input = "R:/xcbt_md_zc_fut_20200312-r-00348.gz",
+corn_quotes <- quote_message(mbp_input = "R:/xcbt_md_zc_fut_20200312-r-00348",
                              date = '2020-03-12',
                              price_displayformat = 1)
 
@@ -141,25 +128,19 @@ head(sp500_quotes_orders[["ESZ7"]])
 ## Order book
 ### Reconstruction: Pseudo code
 
-The limit order book reconstruction is based on the quote messages for each single tradeable contract. When the quote update is addition, one needs to move the existing book depths backward and insert information (e.g., price, quantity, number of orders). When the quote update is modification, one just needs to revise the information of that book depth. Finally, when the quote update is cancellation, one needs to move the existing book depths forward and nullify the last depth in the book. Motivated by Christensen and Woodmansey (2013), a pseudocode is shown in Figure 1.
+The limit order book reconstruction is based on the quote messages for each single tradeable contract. When the quote update is addition, one needs to move the existing book depths backward and insert information (e.g., price, quantity, number of orders). When the quote update is modification, one just needs to revise the information of that book depth. Finally, when the quote update is cancellation, one needs to move the existing book depths forward and nullify the last depth in the book. Motivated by Christensen and Woodmansey (2013), a pseudocode is shown as follows:
 
-```{r, message=FALSE, echo=FALSE, fig.align="center", width = 6, height=6, fig.cap="Figure 1: Algo for book construction." }
-knitr::include_graphics("C:/Users/ruchuan2/Box/cme.mdp_codes/algo1.png")
-```
+![Algorithm 1](man/figures/algo1.png)
 
-In terms of consolidated limit order book, the function makes each book contains all records in both outright and implied books, fill missing values with last observation carrying forward (locf). Then, the initial consolidated book is set to be the same of the outright limit order book. For each record in the implied book, we compare the prices of each implied book record to those in the consolidated book. When the implied prices are in the existing prices in the consolidated book, we add the implied quantity to the corresponding depth in the consolidated book. Otherwise, the implied prices will be sorted with the existing prices in the consolidated book, with possible book moving if applicable. A pseudocode is shown in Figure 2.
+In terms of consolidated limit order book, the function makes each book contains all records in both outright and implied books, fill missing values with last observation carrying forward (locf). Then, the initial consolidated book is set to be the same of the outright limit order book. For each record in the implied book, we compare the prices of each implied book record to those in the consolidated book. When the implied prices are in the existing prices in the consolidated book, we add the implied quantity to the corresponding depth in the consolidated book. Otherwise, the implied prices will be sorted with the existing prices in the consolidated book, with possible book moving if applicable. A pseudocode is shown as follows:
 
-```{r, message=FALSE, echo=FALSE, fig.align="center", width = 6, height=6, fig.cap="Figure 2: Algo for consolidated book construction." }
-knitr::include_graphics("C:/Users/ruchuan2/Box/cme.mdp_codes/algo2.png")
-```
+![Algorithm 2](man/figures/algo2.png)
 
 ### Feature: Anmiated order book visualization
 
 This package also provides an animated order book application for users and now only supports `book_bar()` function. Users can simply set `animation` to `TRUE` and the function will return the animated order book. Users can also adjust the FPS (frame per second) to control the animation playing speed. One example is given as below.
 
-```{r, message=FALSE, echo=FALSE, fig.align="center", width = 5, height=5, fig.cap="An example of animated limit order book." }
-knitr::include_graphics("C:/Users/ruchuan2/Box/cme.mdp_codes/book_bar.gif")
-```
+![Animated book](man/figures/book_bar.gif)
 
 ## Acknowledgements
 Ma acknowledges the financial support from the [Bielfeldt Office for Futures and Options Research](https://ofor.illinois.edu/) at the University of Illinois at Urbana-Champaign.

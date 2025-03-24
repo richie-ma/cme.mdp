@@ -13,6 +13,8 @@ data with FIX protocol more easily in the R environment, including but
 not limited to trade summaries, quote updates, and limit order book
 reconstruction.
 
+## Introduction
+
 Financial markets have become more transparent and exchanges can provide
 high-frequency data for traders to better monitor markets, which creates
 more demand about the high-frequency data usage both in the academia and
@@ -24,23 +26,6 @@ which is a substantially time-consuming task. This project will closely
 focus on how to parse and clean the market data of Chicago Mercantile
 Exchange (CME) under the FIX and MDP protocols and provide other
 statistical procedures related to market liquidity (in later version).
-
-- [CME market data overview](#CME%20market%20data%20overview)
-- [Installation](#Installation)
-- [Trade summary: MBP and MBO](#Trade%20summary:%20MBP%20and%20MBO)
-  - [MBP trade summary](#MBP%20trade%20summary)
-  - [MBO trade summary with order
-    details](#MBO%20trade%20summary%20with%20order%20details)
-- [Quote messages: MBP and MBO](#Quote%20messages:%20MBP%20and%20MBO)
-  - [MBP quote messages](#MBP%20quote%20messages)
-- [Order book](#Order%20book)
-  - [Reconstruction: Pseudo code](#Reconstruction:%20Pseudo%20code)
-  - [Feature: Anmiated order book
-    visualization](#Feature:%20Anmiated%20order%20book%20visualization)
-- [Acknowledgements](#Acknowledgements)
-- [Help, Feature Requests and Bug
-  Reports](#Help,%20Feature%20Requests%20and%20Bug%20Reports)
-- [References](#References)
 
 ## CME market data overview
 
@@ -176,9 +161,10 @@ directly to reconstruct the limit order book.
 
 ``` r
 
-## Exapmle: corn futures on March 12, 2020
+## Example: corn futures on March 12, 2020
+## We only use a part of the original data for illustrative purposes
 
-corn_quotes <- quote_message(mbp_input = "R:/xcbt_md_zc_fut_20200312-r-00348.gz",
+corn_quotes <- quote_message(mbp_input = "R:/xcbt_md_zc_fut_20200312-r-00348",
                              date = '2020-03-12',
                              price_displayformat = 1)
 #> CME MDP 3.0 Quote Messages 
@@ -255,17 +241,13 @@ needs to move the existing book depths backward and insert information
 modification, one just needs to revise the information of that book
 depth. Finally, when the quote update is cancellation, one needs to move
 the existing book depths forward and nullify the last depth in the book.
-Motivated by Christensen and Woodmansey (2013), a pseudocode is shown in
-Figure 1.
+Motivated by Christensen and Woodmansey (2013), a pseudocode is shown as
+follows:
 
-<div class="figure" style="text-align: center">
-
-<img src="../../Box/cme.mdp_codes/algo1.png" alt="Figure 1: Algo for book construction." width="100%" />
-<p class="caption">
-Figure 1: Algo for book construction.
-</p>
-
-</div>
+<figure>
+<img src="man/figures/algo1.png" alt="Algorithm 1" />
+<figcaption aria-hidden="true">Algorithm 1</figcaption>
+</figure>
 
 In terms of consolidated limit order book, the function makes each book
 contains all records in both outright and implied books, fill missing
@@ -277,16 +259,12 @@ prices are in the existing prices in the consolidated book, we add the
 implied quantity to the corresponding depth in the consolidated book.
 Otherwise, the implied prices will be sorted with the existing prices in
 the consolidated book, with possible book moving if applicable. A
-pseudocode is shown in Figure 2.
+pseudocode is shown as follows:
 
-<div class="figure" style="text-align: center">
-
-<img src="../../Box/cme.mdp_codes/algo2.png" alt="Figure 2: Algo for consolidated book construction." width="100%" />
-<p class="caption">
-Figure 2: Algo for consolidated book construction.
-</p>
-
-</div>
+<figure>
+<img src="man/figures/algo2.png" alt="Algorithm 2" />
+<figcaption aria-hidden="true">Algorithm 2</figcaption>
+</figure>
 
 ### Feature: Anmiated order book visualization
 
@@ -296,14 +274,10 @@ and now only supports `book_bar()` function. Users can simply set
 book. Users can also adjust the FPS (frame per second) to control the
 animation playing speed. One example is given as below.
 
-<div class="figure" style="text-align: center">
-
-<img src="../../Box/cme.mdp_codes/book_bar.gif" alt="An example of animated limit order book." width="100%" />
-<p class="caption">
-An example of animated limit order book.
-</p>
-
-</div>
+<figure>
+<img src="man/figures/book_bar.gif" alt="Animated book" />
+<figcaption aria-hidden="true">Animated book</figcaption>
+</figure>
 
 ## Acknowledgements
 
