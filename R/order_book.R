@@ -212,7 +212,7 @@ order_book <- function(mdp_quote_msgs_list,  level=NULL, consolidate=TRUE,  sund
 
             else {
               LOB[,c(5:(dim(LOB)[2]-2))] <- book_list[[k-1]][,c(5:(dim(LOB)[2]-2))]
-              ## assign PX
+
               column_name1 <- paste0("Bid_PX_",as.character(msg$PX_depth[k]))
               column_index1 <- which(colnames(LOB)==column_name1)
               LOB[,column_index1] <- msg$PX[k]
@@ -242,7 +242,7 @@ order_book <- function(mdp_quote_msgs_list,  level=NULL, consolidate=TRUE,  sund
             column_index2 <- which(colnames(LOB)==column_name2)
             column_index3 <- which(colnames(LOB)==column_name3)
 
-            if(column_index1<=62){
+            if(column_index1<=(dim(LOB)[2]-2)){
 
               if(k==1){
 
@@ -373,7 +373,6 @@ order_book <- function(mdp_quote_msgs_list,  level=NULL, consolidate=TRUE,  sund
               }
 
               else {
-                ## assign PX
 
                 LOB[,c(5:(dim(LOB)[2]-2))] <- book_list[[k-1]][,c(5:(dim(LOB)[2]-2))]
                 LOB[, c(5:7)] <- 0
@@ -408,7 +407,6 @@ order_book <- function(mdp_quote_msgs_list,  level=NULL, consolidate=TRUE,  sund
               }
 
               else {
-                ## assign PX
 
                 LOB[,c(5:(dim(LOB)[2]-2))] <- book_list[[k-1]][,c(5:(dim(LOB)[2]-2))]
                 LOB[, c((dim(LOB)[2]-4):(dim(LOB)[2]-2))] <- 0
