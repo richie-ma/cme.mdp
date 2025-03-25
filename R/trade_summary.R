@@ -142,7 +142,6 @@ trade_summary <- function(mbp_input,
       trade.info <- as.data.table(do.call(rbind, trade.info))[, -1]
       names(trade.info)[c(1:3)] <- c("MsgSeq", "SendingTime", "Date")
 
-      trade.info$Date <- as.Date(trade.info$Date, "%Y%m%d")
       #Time <- paste(substr(trade.info$Time,1,8),substr(trade.info$Time,9,10),substr(trade.info$Time,11,12),
       #substr(trade.info$Time,13,14),substr(trade.info$Time,15,23),sep=".")
       #trade.info$Time <- as.POSIXct(Time, tz="UTC", "%Y%m%d.%H.%M.%OS") ## original time is UTC
@@ -169,7 +168,6 @@ trade_summary <- function(mbp_input,
       trade.info1 <- as.data.table(do.call(rbind, trade.info1))[, -1]
       names(trade.info1)[c(1:3)] <- c("MsgSeq", "SendingTime", "Date")
 
-      trade.info1$Date <- as.Date(trade.info1$Date, "%Y%m%d")
       #Time <- paste(substr(trade.info$Time,1,8),substr(trade.info$Time,9,10),substr(trade.info$Time,11,12),
       #substr(trade.info$Time,13,14),substr(trade.info$Time,15,23),sep=".")
       #trade.info$Time <- as.POSIXct(Time, tz="UTC", "%Y%m%d.%H.%M.%OS") ## original time is UTC
@@ -211,7 +209,6 @@ trade_summary <- function(mbp_input,
       trade.info2 <- as.data.table(do.call(rbind, trade.info2))[, -1]
       names(trade.info2)[c(1:3)] <- c("MsgSeq", "SendingTime", "Date")
 
-      trade.info2$Date <- as.Date(trade.info2$Date, "%Y%m%d")
       #Time <- paste(substr(trade.info$Time,1,8),substr(trade.info$Time,9,10),substr(trade.info$Time,11,12),
       #substr(trade.info$Time,13,14),substr(trade.info$Time,15,23),sep=".")
       #trade.info$Time <- as.POSIXct(Time, tz="UTC", "%Y%m%d.%H.%M.%OS") ## original time is UTC
@@ -240,7 +237,6 @@ trade_summary <- function(mbp_input,
       trade.info3 <- as.data.table(do.call(rbind, trade.info3))[, -1]
       names(trade.info3)[c(1:3)] <- c("MsgSeq", "SendingTime", "Date")
 
-      trade.info3$Date <- as.Date(trade.info3$Date, "%Y%m%d")
       #Time <- paste(substr(trade.info$Time,1,8),substr(trade.info$Time,9,10),substr(trade.info$Time,11,12),
       #substr(trade.info$Time,13,14),substr(trade.info$Time,15,23),sep=".")
       #trade.info$Time <- as.POSIXct(Time, tz="UTC", "%Y%m%d.%H.%M.%OS") ## original time is UTC
@@ -344,7 +340,6 @@ trade_summary <- function(mbp_input,
       trade.info <- as.data.table(do.call(rbind, trade.info))[, -1]
       names(trade.info)[c(1:4)] <- c("Date", "MsgSeq", "SendingTime", "TransactTime")
 
-      trade.info$Date <- as.Date(trade.info$Date, "%Y%m%d")
       #Time <- paste(substr(trade.info$Time,1,8),substr(trade.info$Time,9,10),substr(trade.info$Time,11,12),
       #             substr(trade.info$Time,13,14),substr(trade.info$Time,15,23),sep=".")
       #trade.info$Time <- as.POSIXct(Time, tz="UTC", "%Y%m%d.%H.%M.%OS") ## original time is UTC

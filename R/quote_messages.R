@@ -101,7 +101,7 @@ quote_message <- function(mbp_input,
   ## let R know whether it is FIX or MDP data
   ## For the FIX data
 
-  if (date < as.Date("2015-11-20", "%Y-%m-%d")) {
+  if (date < "2015-11-20") {
     Index <- str_subset(data, "\001269=[01]|\001276=RK")
     rm(data)
 
