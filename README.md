@@ -246,7 +246,6 @@ follows:
 
 <figure>
 <img src="man/figures/algo1.png" alt="Algorithm 1" />
-<figcaption aria-hidden="true">Algorithm 1</figcaption>
 </figure>
 
 In terms of consolidated limit order book, the function makes each book
@@ -263,7 +262,6 @@ pseudocode is shown as follows:
 
 <figure>
 <img src="man/figures/algo2.png" alt="Algorithm 2" />
-<figcaption aria-hidden="true">Algorithm 2</figcaption>
 </figure>
 
 ### Feature: Anmiated order book visualization
@@ -276,7 +274,6 @@ animation playing speed. One example is given as below.
 
 <figure>
 <img src="man/figures/book_bar.gif" alt="Animated book" />
-<figcaption aria-hidden="true">Animated book</figcaption>
 </figure>
 
 ## Acknowledgements
