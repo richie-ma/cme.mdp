@@ -481,7 +481,7 @@ order_book <- function(mdp_quote_msgs_list,  level=NULL, consolidate=TRUE,  sund
 
      #### constructing the consolidated book
 
-    if(dim(LOB_implied)[1]!=0 & dim(LOB_implied)[1]!=0){
+    if(dim(LOB_implied)[1]!=0 & dim(LOB_outright)[1]!=0){
 
       LOB_implied_new <- matrix(NA,nrow=dim(LOB_outright)[1],ncol=14)
 
