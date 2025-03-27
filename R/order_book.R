@@ -6,6 +6,8 @@
 
 
 
+
+
 #' Reconstruct limit order book(s) from the quote messages extracted from the CME Market by Price data
 #'
 #'`order_book()` reconstructs limit order book(s) from the quote messages extracted from the CME Market by Price data.
@@ -193,7 +195,7 @@ order_book <- function(mdp_quote_msgs_list,
 
 
       for (k in 1:dim(msg)[1]) {
-        #print(k)
+      #  print(k)
 
         LOB <- book(level)
 
@@ -210,7 +212,7 @@ order_book <- function(mdp_quote_msgs_list,
             column_index3 <- which(colnames(LOB) == column_name3)
 
             ## not the last order
-            if (column_index1 >= 5) {
+            if (column_index1 > 5) {
               if (k == 1) {
                 LOB[, column_index1] <- msg$PX[k]
 
@@ -232,26 +234,27 @@ order_book <- function(mdp_quote_msgs_list,
                 LOB[, c(5:(column_index3 - 3))] <- book_list[[k - 1]][, c(8:column_index3)]
 
               }
-            }
+            } else{
+              if (k != 1) {
+                LOB[, c(5:(dim(LOB)[2] - 2))] <- book_list[[k - 1]][, c(5:(dim(LOB)[2] -
+                                                                             2))]
+              } else{
+                column_name1 <- paste0("Bid_PX_", as.character(msg$PX_depth[k]))
+                column_index1 <- which(colnames(LOB) == column_name1)
+                LOB[, column_index1] <- msg$PX[k]
 
+                ## assign Qty
+                column_name2 <- paste0("Bid_Qty_", as.character(msg$PX_depth[k]))
+                column_index2 <- which(colnames(LOB) == column_name2)
+                LOB[, column_index2] <- msg$Qty[k]
 
-            else {
-              LOB[, c(5:(dim(LOB)[2] - 2))] <- book_list[[k - 1]][, c(5:(dim(LOB)[2] -
-                                                                           2))]
+                ## assign n_order
+                column_name3 <- paste0("Bid_Ord_", as.character(msg$PX_depth[k]))
+                column_index3 <- which(colnames(LOB) == column_name3)
+                LOB[, column_index3] <- msg$Ord[k]
 
-              column_name1 <- paste0("Bid_PX_", as.character(msg$PX_depth[k]))
-              column_index1 <- which(colnames(LOB) == column_name1)
-              LOB[, column_index1] <- msg$PX[k]
+              }
 
-              ## assign Qty
-              column_name2 <- paste0("Bid_Qty_", as.character(msg$PX_depth[k]))
-              column_index2 <- which(colnames(LOB) == column_name2)
-              LOB[, column_index2] <- msg$Qty[k]
-
-              ## assign n_order
-              column_name3 <- paste0("Bid_Ord_", as.character(msg$PX_depth[k]))
-              column_index3 <- which(colnames(LOB) == column_name3)
-              LOB[, column_index3] <- msg$Ord[k]
             }
 
           }
@@ -267,7 +270,7 @@ order_book <- function(mdp_quote_msgs_list,
             column_index2 <- which(colnames(LOB) == column_name2)
             column_index3 <- which(colnames(LOB) == column_name3)
 
-            if (column_index1 <= (dim(LOB)[2] - 2)) {
+            if (column_index1 < (dim(LOB)[2] - 2)) {
               if (k == 1) {
                 LOB[, column_index1] <- msg$PX[k]
 
@@ -295,8 +298,14 @@ order_book <- function(mdp_quote_msgs_list,
             }
             else {
               ## assign PX
-              LOB[, c(5:(dim(LOB)[2] - 2))] <-  book_list[[k - 1]][, c(5:(dim(LOB)[2] -
-                                                                            2))]
+
+              if (k != 1) {
+                LOB[, c(5:(dim(LOB)[2] - 2))] <-  book_list[[k - 1]][, c(5:(dim(LOB)[2] -
+                                                                              2))]
+
+              }
+
+
               column_name1 <- paste0("Ask_PX_", as.character(msg$PX_depth[k]))
               column_index1 <- which(colnames(LOB) == column_name1)
               LOB[, column_index1] <- msg$PX[k]
@@ -516,7 +525,8 @@ order_book <- function(mdp_quote_msgs_list,
             LOB_implied_new <- rbind(LOB_implied_new, LOB_implied)
             LOB_implied_new <- as.data.table(LOB_implied_new)
             setkey(LOB_implied_new, Seq)
-            LOB_implied_new[, c(5:12)] <- nafill(LOB_implied_new[, c(5:12)], "locf")
+
+            setnafill(LOB_implied_new, 'locf', cols = colnames(LOB_implied_new)[5:12])
             LOB_implied_new[which(is.na(LOB_implied_new$Bid_PX_1 == TRUE)), c(5:12)] <-
               0
 
@@ -531,7 +541,8 @@ order_book <- function(mdp_quote_msgs_list,
             LOB_outright_new <- rbind(LOB_outright_new, LOB_outright)
             LOB_outright_new <- as.data.table(LOB_outright_new)
             setkey(LOB_outright_new, Seq)
-            LOB_outright_new[, c(5:64)] <- nafill(LOB_outright_new[, c(5:64)], "locf")
+            setnafill(LOB_outright_new, 'locf', cols=colnames(LOB_outright_new)[5:64])
+
             LOB_outright_new <- as.matrix(LOB_outright_new)
 
             rm(LOB_implied, LOB_outright)
@@ -545,19 +556,23 @@ order_book <- function(mdp_quote_msgs_list,
 
             LOB_conso_list <- list()
 
+            bid_px1_index <- 3 * level + 2
+            ask_px1_index <- 3 * level + 5
+
             for (a in 1:dim(messages)[1]) {
               LOB_conso <- book(level)
 
 
-              #     print(a)
+                 #  print(a)
 
-              LOB_conso[, c(5:64)] <- LOB_outright_new[a, c(5:64)]
+              LOB_conso[, c(5:(level * 2 * 3 + 4))] <- LOB_outright_new[a, c(5:(level * 2 * 3 + 4))]
+
 
               if (LOB_implied_new$Bid_PX_1[a] != 0) {
-                if (LOB_implied_new$Bid_PX_1[a] %in% LOB_conso[, c(seq(5, 32, 3))] == TRUE) {
+                if (LOB_implied_new$Bid_PX_1[a] %in% LOB_conso[, c(seq(5, bid_px1_index, 3))] == TRUE) {
                   bid1_index <- as.numeric(
                     3 * which(
-                      LOB_conso[, c(seq(5, 32, 3))] == LOB_implied_new$Bid_PX_1[a],
+                      LOB_conso[, c(seq(5, bid_px1_index, 3))] == LOB_implied_new$Bid_PX_1[a],
                       arr.ind = TRUE
                     ) + 2
                   )
@@ -570,7 +585,7 @@ order_book <- function(mdp_quote_msgs_list,
                 }
 
                 else{
-                  px_seq <- as.numeric(LOB_conso[, c(seq(5, 32, 3))])
+                  px_seq <- as.numeric(LOB_conso[, c(seq(5, bid_px1_index, 3))])
 
                   conso_px <- which(
                     sort(c(
@@ -579,7 +594,7 @@ order_book <- function(mdp_quote_msgs_list,
                     ), decreasing = TRUE) == as.numeric(LOB_implied_new$Bid_PX_1[a])
                   )
 
-                  if (conso_px <= 10) {
+                  if (conso_px <= level) {
                     conso_px_lv <- paste0("Bid_PX_", as.character(conso_px))
                     conso_px_id <- which(colnames(LOB_conso) == conso_px_lv)
 
@@ -605,10 +620,10 @@ order_book <- function(mdp_quote_msgs_list,
               }
 
               if (LOB_implied_new$Bid_PX_2[a] != 0) {
-                if (LOB_implied_new$Bid_PX_2[a] %in% LOB_conso[, c(seq(5, 32, 3))] == TRUE) {
+                if (LOB_implied_new$Bid_PX_2[a] %in% LOB_conso[, c(seq(5, bid_px1_index, 3))] == TRUE) {
                   bid2_index <- as.numeric(
                     3 * which(
-                      LOB_conso[, c(seq(5, 32, 3))] == LOB_implied_new$Bid_PX_2[a],
+                      LOB_conso[, c(seq(5, bid_px1_index, 3))] == LOB_implied_new$Bid_PX_2[a],
                       arr.ind = TRUE
                     ) + 2
                   )
@@ -621,7 +636,7 @@ order_book <- function(mdp_quote_msgs_list,
                 }
 
                 else{
-                  px_seq <- as.numeric(LOB_conso[, c(seq(5, 32, 3))])
+                  px_seq <- as.numeric(LOB_conso[, c(seq(5, bid_px1_index, 3))])
 
                   conso_px <- which(
                     sort(c(
@@ -630,7 +645,7 @@ order_book <- function(mdp_quote_msgs_list,
                     ), decreasing = TRUE) == as.numeric(LOB_implied_new$Bid_PX_2[a])
                   )
 
-                  if (conso_px <= 10) {
+                  if (conso_px <= level) {
                     conso_px_lv <- paste0("Bid_PX_", as.character(conso_px))
                     conso_px_id <- which(colnames(LOB_conso) == conso_px_lv)
 
@@ -654,12 +669,12 @@ order_book <- function(mdp_quote_msgs_list,
               }
               ## ask orders
               if (LOB_implied_new$Ask_PX_1[a] != 0) {
-                if (LOB_implied_new$Ask_PX_1[a] %in% LOB_conso[, c(seq(35, 64, 3))] == TRUE) {
+                if (LOB_implied_new$Ask_PX_1[a] %in% LOB_conso[, c(seq(ask_px1_index, (level * 2 * 3 + 4), 3))] == TRUE) {
                   ask1_index <- as.numeric(
                     3 * which(
-                      LOB_conso[, c(seq(35, 64, 3))] == LOB_implied_new$Ask_PX_1[a],
+                      LOB_conso[, c(seq(ask_px1_index, (level * 2 * 3 + 4), 3))] == LOB_implied_new$Ask_PX_1[a],
                       arr.ind = TRUE
-                    ) + 32
+                    ) + bid_px1_index
                   )
 
                   LOB_conso[, ask1_index] <- LOB_implied_new$Ask_PX_1[a]
@@ -669,7 +684,7 @@ order_book <- function(mdp_quote_msgs_list,
                 }
 
                 else{
-                  px_seq <- as.numeric(LOB_conso[, c(seq(35, 64, 3))])
+                  px_seq <- as.numeric(LOB_conso[, c(seq(ask_px1_index, (level * 2 * 3 + 4), 3))])
 
                   conso_px <- which(
                     sort(c(
@@ -678,12 +693,12 @@ order_book <- function(mdp_quote_msgs_list,
                     ), decreasing = FALSE) == as.numeric(LOB_implied_new$Ask_PX_1[a])
                   )
 
-                  if (conso_px <= 10) {
+                  if (conso_px <= level) {
                     conso_px_lv <- paste0("Ask_PX_", as.character(conso_px))
                     conso_px_id <- which(colnames(LOB_conso) == conso_px_lv)
 
-                    if (conso_px_id < 62) {
-                      LOB_conso[, c((conso_px_id + 3):64)] <- LOB_conso[, c(conso_px_id:61)]
+                    if (conso_px_id < (level * 2 * 3 + 2)) {
+                      LOB_conso[, c((conso_px_id + 3):(level * 2 * 3 + 4))] <- LOB_conso[, c(conso_px_id:(level * 2 * 3 + 1))]
 
 
 
@@ -703,12 +718,12 @@ order_book <- function(mdp_quote_msgs_list,
               }
 
               if (LOB_implied_new$Ask_PX_2[a] != 0) {
-                if (LOB_implied_new$Ask_PX_2[a] %in% LOB_conso[, c(seq(35, 64, 3))] == TRUE) {
+                if (LOB_implied_new$Ask_PX_2[a] %in% LOB_conso[, c(seq(ask_px1_index, (level * 2 * 3 + 4), 3))] == TRUE) {
                   ask2_index <- as.numeric(
                     3 * which(
-                      LOB_conso[, c(seq(35, 64, 3))] == LOB_implied_new$Ask_PX_2[a],
+                      LOB_conso[, c(seq(ask_px1_index, (level * 2 * 3 + 4), 3))] == LOB_implied_new$Ask_PX_2[a],
                       arr.ind = TRUE
-                    ) + 32
+                    ) + bid_px1_index
                   )
 
 
@@ -719,7 +734,7 @@ order_book <- function(mdp_quote_msgs_list,
                 }
 
                 else{
-                  px_seq <- as.numeric(LOB_conso[, c(seq(35, 64, 3))])
+                  px_seq <- as.numeric(LOB_conso[, c(seq(ask_px1_index, (level * 2 * 3 + 4), 3))])
 
                   conso_px <- which(
                     sort(c(
@@ -728,12 +743,12 @@ order_book <- function(mdp_quote_msgs_list,
                     ), decreasing = FALSE) == as.numeric(LOB_implied_new$Ask_PX_2[a])
                   )
 
-                  if (conso_px <= 10) {
+                  if (conso_px <= level) {
                     conso_px_lv <- paste0("Ask_PX_", as.character(conso_px))
                     conso_px_id <- which(colnames(LOB_conso) == conso_px_lv)
 
-                    if (conso_px_id < 62) {
-                      LOB_conso[, c((conso_px_id + 3):64)] <- LOB_conso[, c(conso_px_id:61)]
+                    if (conso_px_id < (level * 2 * 3 + 2)) {
+                      LOB_conso[, c((conso_px_id + 3):(level * 2 * 3 + 4))] <- LOB_conso[, c(conso_px_id:(level * 2 * 3 + 1))]
 
 
 
