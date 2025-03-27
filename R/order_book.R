@@ -238,7 +238,7 @@ order_book <- function(mdp_quote_msgs_list,
               if (k != 1) {
                 LOB[, c(5:(dim(LOB)[2] - 2))] <- book_list[[k - 1]][, c(5:(dim(LOB)[2] -
                                                                              2))]
-              } else{
+              }
                 column_name1 <- paste0("Bid_PX_", as.character(msg$PX_depth[k]))
                 column_index1 <- which(colnames(LOB) == column_name1)
                 LOB[, column_index1] <- msg$PX[k]
@@ -253,7 +253,7 @@ order_book <- function(mdp_quote_msgs_list,
                 column_index3 <- which(colnames(LOB) == column_name3)
                 LOB[, column_index3] <- msg$Ord[k]
 
-              }
+
 
             }
 
