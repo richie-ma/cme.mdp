@@ -8,6 +8,8 @@
 
 
 
+
+
 #' Reconstruct limit order book(s) from the quote messages extracted from the CME Market by Price data
 #'
 #'`order_book()` reconstructs limit order book(s) from the quote messages extracted from the CME Market by Price data.
@@ -31,7 +33,7 @@
 #' limit order books for all tradeable contracts in a trading day stored in a list.
 #' @export
 #'
-#' @import data.table
+#' @import data.table progress
 #'
 #' @section Why \code{mdp_quote_msgs_list} needs Sunday's file:
 #' One should store all quote messages extracted from the MBP data including Sunday's file
@@ -192,10 +194,18 @@ order_book <- function(mdp_quote_msgs_list,
     book1 <- function(msg, level, ...) {
       book_list <- list()
 
+      pb_book <- progress_bar$new(
+        format = "  Processing outright/implied book :percent[:bar] :current/:total [:elapsed/:eta, :rate]",
+        total = dim(msg)[1],
+        clear = FALSE,
+        width = 100
+      )
+
 
 
       for (k in 1:dim(msg)[1]) {
-      #  print(k)
+        pb_book$tick()
+        #  print(k)
 
         LOB <- book(level)
 
@@ -239,19 +249,19 @@ order_book <- function(mdp_quote_msgs_list,
                 LOB[, c(5:(dim(LOB)[2] - 2))] <- book_list[[k - 1]][, c(5:(dim(LOB)[2] -
                                                                              2))]
               }
-                column_name1 <- paste0("Bid_PX_", as.character(msg$PX_depth[k]))
-                column_index1 <- which(colnames(LOB) == column_name1)
-                LOB[, column_index1] <- msg$PX[k]
+              column_name1 <- paste0("Bid_PX_", as.character(msg$PX_depth[k]))
+              column_index1 <- which(colnames(LOB) == column_name1)
+              LOB[, column_index1] <- msg$PX[k]
 
-                ## assign Qty
-                column_name2 <- paste0("Bid_Qty_", as.character(msg$PX_depth[k]))
-                column_index2 <- which(colnames(LOB) == column_name2)
-                LOB[, column_index2] <- msg$Qty[k]
+              ## assign Qty
+              column_name2 <- paste0("Bid_Qty_", as.character(msg$PX_depth[k]))
+              column_index2 <- which(colnames(LOB) == column_name2)
+              LOB[, column_index2] <- msg$Qty[k]
 
-                ## assign n_order
-                column_name3 <- paste0("Bid_Ord_", as.character(msg$PX_depth[k]))
-                column_index3 <- which(colnames(LOB) == column_name3)
-                LOB[, column_index3] <- msg$Ord[k]
+              ## assign n_order
+              column_name3 <- paste0("Bid_Ord_", as.character(msg$PX_depth[k]))
+              column_index3 <- which(colnames(LOB) == column_name3)
+              LOB[, column_index3] <- msg$Ord[k]
 
 
 
@@ -541,7 +551,9 @@ order_book <- function(mdp_quote_msgs_list,
             LOB_outright_new <- rbind(LOB_outright_new, LOB_outright)
             LOB_outright_new <- as.data.table(LOB_outright_new)
             setkey(LOB_outright_new, Seq)
-            setnafill(LOB_outright_new, 'locf', cols=colnames(LOB_outright_new)[5:64])
+            setnafill(LOB_outright_new,
+                      'locf',
+                      cols = colnames(LOB_outright_new)[5:64])
 
             LOB_outright_new <- as.matrix(LOB_outright_new)
 
@@ -559,11 +571,21 @@ order_book <- function(mdp_quote_msgs_list,
             bid_px1_index <- 3 * level + 2
             ask_px1_index <- 3 * level + 5
 
+
+            pb_conso_book <- progress_bar$new(
+              format = "  Processing consolidated book :percent[:bar] :current/:total [:elapsed/:eta, :rate]",
+              total = dim(messages)[1],
+              clear = FALSE,
+              width = 100
+            )
+
+
             for (a in 1:dim(messages)[1]) {
+              pb_conso_book$tick()
               LOB_conso <- book(level)
 
 
-                 #  print(a)
+              #  print(a)
 
               LOB_conso[, c(5:(level * 2 * 3 + 4))] <- LOB_outright_new[a, c(5:(level * 2 * 3 + 4))]
 
