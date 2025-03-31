@@ -102,7 +102,7 @@ quote_message <- function(mbp_input,
   ## For the FIX data
 
   if (date < "2015-11-20") {
-    Index <- str_subset(data, "\001269=[01]|\001276=RK")
+    Index <- str_subset(data, "\001269=[01]|\001276=[RK]")
     rm(data)
 
     Index <- str_subset(Index, "\00135=X")
