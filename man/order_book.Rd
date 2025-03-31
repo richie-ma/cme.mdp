@@ -9,7 +9,8 @@ order_book(
   level = NULL,
   consolidate = TRUE,
   sunday_input = NULL,
-  security = NULL
+  security = NULL,
+  progress_bar = TRUE
 )
 }
 \arguments{
@@ -27,6 +28,8 @@ MBP/MBO data need to be provided to extract the default depth.}
 \item{security}{A symbol of a single contract of a financial security or a vector of multiple single contracts, should be
 in the format like "CLK9" (crude oil), "ESH9" (E-mini S&P 500), etc. These can
 be obtained from CME website for a contract specification.}
+
+\item{progress_bar}{If \code{TRUE} (default), show the progress bar of book reconstruction.}
 }
 \value{
 A list of outright, implied, and consolidated (if \code{consolidate} = \code{TRUE})

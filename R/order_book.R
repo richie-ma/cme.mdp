@@ -1,15 +1,4 @@
 
-
-
-
-
-
-
-
-
-
-
-
 #' Reconstruct limit order book(s) from the quote messages extracted from the CME Market by Price data
 #'
 #'`order_book()` reconstructs limit order book(s) from the quote messages extracted from the CME Market by Price data.
@@ -28,6 +17,7 @@
 #' @param security A symbol of a single contract of a financial security or a vector of multiple single contracts, should be
 #' in the format like "CLK9" (crude oil), "ESH9" (E-mini S&P 500), etc. These can
 #' be obtained from CME website for a contract specification.
+#' @param progress_bar If \code{TRUE} (default), show the progress bar of book reconstruction.
 #'
 #' @returns A list of outright, implied, and consolidated (if \code{consolidate} = \code{TRUE})
 #' limit order books for all tradeable contracts in a trading day stored in a list.
@@ -77,7 +67,8 @@ order_book <- function(mdp_quote_msgs_list,
                        level = NULL,
                        consolidate = TRUE,
                        sunday_input = NULL,
-                       security = NULL) {
+                       security = NULL,
+                       progress_bar = TRUE) {
   Date <- Code <- Implied <- Symbol  <- MarketDepth <- Seq <- NULL
 
   ### Order book reconstruction is based on each contract
@@ -194,6 +185,8 @@ order_book <- function(mdp_quote_msgs_list,
     book1 <- function(msg, level, ...) {
       book_list <- list()
 
+      if(isTRUE(progress_bar)){
+
       pb_book <- progress_bar$new(
         format = "  Processing outright/implied book :percent[:bar] :current/:total [:elapsed/:eta, :rate]",
         total = dim(msg)[1],
@@ -201,10 +194,17 @@ order_book <- function(mdp_quote_msgs_list,
         width = 100
       )
 
+      }
+
 
 
       for (k in 1:dim(msg)[1]) {
+
+        if(isTRUE(progress_bar)){
+
         pb_book$tick()
+
+        }
         #  print(k)
 
         LOB <- book(level)
@@ -571,6 +571,8 @@ order_book <- function(mdp_quote_msgs_list,
             bid_px1_index <- 3 * level + 2
             ask_px1_index <- 3 * level + 5
 
+            if(isTRUE(progress_bar)){
+
 
             pb_conso_book <- progress_bar$new(
               format = "  Processing consolidated book :percent[:bar] :current/:total [:elapsed/:eta, :rate]",
@@ -579,9 +581,16 @@ order_book <- function(mdp_quote_msgs_list,
               width = 100
             )
 
+            }
+
 
             for (a in 1:dim(messages)[1]) {
+
+              if(isTRUE(progress_bar)){
+
               pb_conso_book$tick()
+
+              }
               LOB_conso <- book(level)
 
 
