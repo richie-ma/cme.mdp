@@ -83,7 +83,7 @@ mbo_quote_queue <- function(mbo_input,
 
   ### MBO is only available since 2017 so only one template is available.
 
-  Index <- str_subset(data, "\001269=[01]|\001276=RK")
+  Index <- str_subset(data, "\001269=[01EF]")
   rm(data)
 
   Index <- str_subset(Index, "\00135=X")
