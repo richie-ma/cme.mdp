@@ -46,7 +46,7 @@ meta_data <- function(sunday_input, date, security = NULL) {
     if (date < "2015-11-20") {
       if (is.null(security) == FALSE) {
         data <- str_subset(data,
-                           paste0("\00155=", security, "(?!([:space:]|-))"))
+                           paste0("\00107=", security, "(?!([:space:]|-))"))
         data <- str_subset(data, "\00135=d")
         data <- str_replace_all(data, "\001", ",")
       } else{
@@ -390,7 +390,7 @@ meta_data <- function(sunday_input, date, security = NULL) {
                  header = F,
                  sep = "\\",
                  fill = TRUE)[[1L]]
-  meta_data <- main(file, date = date, security = NULL)
+  meta_data <- main(file, date = date, security = security)
 
 
 

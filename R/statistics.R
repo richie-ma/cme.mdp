@@ -714,5 +714,5 @@ statistics <- function(input, date, security = NULL) {
                  header = F,
                  sep = "\\",
                  fill = TRUE)[[1L]]
-  stat <- stat_main(file, date = date, security = NULL)
+  stat <- stat_main(file, date = date, security = security)
 }
