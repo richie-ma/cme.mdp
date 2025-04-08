@@ -107,7 +107,7 @@ tbbo <- function(trades,
     ### Only assign trades that are not defined by the CME
 
     if (0 %in% tbbo[, unique(agg)] == FALSE) {
-      stop('All trades are defined by the CME. No need to be redefined.')
+      stop( = )
 
     }
 
@@ -143,7 +143,7 @@ tbbo <- function(trades,
         agg == 0 & 1 == shift(agg, 1, "lag", fill = NA),
         1,
         fifelse(agg == 0 &
-                  -1 == shift(agg, 1, "lag", fill = NA), 1, 0)
+                  2 == shift(agg, 1, "lag", fill = NA), 2, 0)
       ))]
 
       if (tbbo[agg == 0, .N] == 0) {
