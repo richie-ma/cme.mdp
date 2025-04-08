@@ -9,9 +9,9 @@
 Authors: Richie R. Ma and Brian G. Peterson
 
 The goal of cme.mdp is to clean Chicago Mercantile Exchange (CME) market
-data with FIX protocol more easily in the R environment, including but
-not limited to trade summaries, quote updates, and limit order book
-reconstruction.
+data with FIX protocol more easily (pretty user-friendly) in the R environment, 
+including but not limited to trade summaries, quote updates, and limit order book
+reconstruction. 
 
 ## Introduction
 
@@ -280,7 +280,9 @@ animation playing speed. One example is given as below.
 
 Ma acknowledges the financial support from the [Bielfeldt Office for
 Futures and Options Research](https://ofor.illinois.edu/) at the
-University of Illinois at Urbana-Champaign.
+University of Illinois at Urbana-Champaign. Ma also acknowledges prior
+practice from former OFOR members, including but not limited to Anabelle 
+Couleau, Siyu Bian. Some codes are heavily inspired by them.
 
 ## Help, Feature Requests and Bug Reports
 
