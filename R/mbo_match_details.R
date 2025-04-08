@@ -9,6 +9,9 @@
 #' and trade ID, etc.
 #'
 #' @param mbo_input A CME MBO raw data
+#' @param date Trading date associated with the raw data, which can be found in
+#' the file name easily in \code{YYYYMMDD} format. This argument is required to select
+#' the parsing format.
 #' @param price_displayformat Display format of trade price, which could be 1,
 #' 0.01, or 0.001, etc. If it is unknown, the nearest Sunday's (not a
 #' CME trading holiday) MBP/MBO data need to be provided to extract the display format.
@@ -97,10 +100,17 @@
 #' trade_details <- mbo_match_details(file, "2019-01-07", sunday_input = sunday_file)
 #' }
 #'
-mbo_match_details <- function(mbo_input,
+mbo_match_details <- function(mbo_input, date,
                               price_displayformat = NULL,
                               sunday_input = NULL) {
   Code <- MsgSeq <- trade_id <- end.id <- start.id <- Ord <- DisplayFactor <- PX <- NULL
+
+  date <- as.Date(date)
+
+  if (inherits(date, "Date") == FALSE) {
+    stop("date should be in the format as YYYY-MM-DD.")
+
+  }
 
   data <- fread(mbo_input,
                 header = F,

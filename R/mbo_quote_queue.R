@@ -7,6 +7,9 @@
 #'  and order IDs, order priority, etc.
 #'
 #' @param mbo_input A CME MBO raw data.
+#' @param date Trading date associated with the raw data, which can be found in
+#' the file name easily in \code{YYYYMMDD} format. This argument is required to select
+#' the parsing format.
 #' @param implied_quotes \code{FALSE} by default. if \code{TRUE}, return the implied quote messages.
 #' @param price_displayformat Display format of trade price, which could be 1,
 #' 0.01, or 0.001, etc. If it is unknown, the nearest Sunday's (not a
@@ -70,11 +73,19 @@
 #' order_details <- mbo_quote_queue(file, "2019-01-07", sunday_input = sunday_file)
 #' }
 #'
-mbo_quote_queue <- function(mbo_input,
+mbo_quote_queue <- function(mbo_input,date,
                             implied_quotes = FALSE,
                             price_displayformat = NULL,
                             sunday_input = NULL) {
   Code <- PX <- DisplayFactor <- Ref_ID <- NULL
+
+  date <- as.Date(date)
+
+  if (inherits(date, "Date") == FALSE) {
+    stop("date should be in the format as YYYY-MM-DD.")
+
+  }
+
 
   data <- fread(mbo_input,
                 header = F,
