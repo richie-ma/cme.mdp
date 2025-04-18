@@ -8,10 +8,10 @@
 
 Authors: Richie R. Ma and Brian G. Peterson
 
-The goal of cme.mdp is to clean Chicago Mercantile Exchange (CME) market
-data with FIX protocol more easily (pretty user-friendly) in the R environment, 
-including but not limited to trade summaries, quote updates, and limit order book
-reconstruction. 
+The goal of `cme.mdp` is to clean Chicago Mercantile Exchange (CME)
+market data with FIX protocol more easily (pretty user-friendly) in the
+R environment, including but not limited to trade summaries, quote
+updates, and limit order book reconstruction.
 
 ## Introduction
 
@@ -49,8 +49,9 @@ You can install the development version of cme.mdp from
 [GitHub](https://github.com/) with:
 
 ``` r
-# install.packages("devtools") #Install the 'devtools' package if you haven't
+install.packages("devtools")
 devtools::install_github("richie-ma/cme.mdp")
+library(cme.mdp)
 ```
 
 ## Trade summary: MBP and MBO
@@ -58,7 +59,7 @@ devtools::install_github("richie-ma/cme.mdp")
 ### MBP trade summary
 
 This is a basic example which shows you how to extract trade summary
-messages from the raw data. CME MDP data disseminate trade summary
+messages from the raw MBP data. CME MBP data disseminate trade summary
 messages with trade price, trade size, number of orders, and trade
 aggressor (direction) for most of trades. Trades that are matched with
 implied orders might not have an explicit aggressor from the CME.
@@ -85,14 +86,14 @@ gold_trades <- trade_summary(
 
 head(gold_trades[["GCF0"]])
 #> Key: <Code, Seq>
-#>          Date  MsgSeq             SendingTime            TransactTime   Code
-#>        <Date>   <num>                  <char>                  <char> <char>
-#> 1: 2020-01-02 7672654 20200102020146175426919 20200102020146174657851   GCF0
-#> 2: 2020-01-02 7676350 20200102020218681738774 20200102020218678765327   GCF0
-#> 3: 2020-01-02 7676361 20200102020218682147202 20200102020218678773403   GCF0
-#> 4: 2020-01-02 7676364 20200102020218682531825 20200102020218678775243   GCF0
-#> 5: 2020-01-02 7676366 20200102020218682721907 20200102020218678777285   GCF0
-#> 6: 2020-01-02 7676370 20200102020218682975735 20200102020218678781159   GCF0
+#>        Date  MsgSeq             SendingTime            TransactTime   Code
+#>      <char>   <num>                  <char>                  <char> <char>
+#> 1: 20200102 7672654 20200102020146175426919 20200102020146174657851   GCF0
+#> 2: 20200102 7676350 20200102020218681738774 20200102020218678765327   GCF0
+#> 3: 20200102 7676361 20200102020218682147202 20200102020218678773403   GCF0
+#> 4: 20200102 7676364 20200102020218682531825 20200102020218678775243   GCF0
+#> 5: 20200102 7676366 20200102020218682721907 20200102020218678777285   GCF0
+#> 6: 20200102 7676370 20200102020218682975735 20200102020218678781159   GCF0
 #>        Seq     PX  Size   Ord   agg
 #>      <num>  <num> <num> <num> <num>
 #> 1: 2275838 1518.1     5     1     0
@@ -112,7 +113,7 @@ order and the rest rows show the information of matching (limit) orders.
 
 For each trade, the MBO data assign a unique trade ID and users can know
 the matched quantity of each matching (limit) order. Generally, the
-matched quantity of the incomding (market) order eqauls to the sum of
+matched quantity of the incoming (market) order equals to the sum of
 matched quantity of all matching (limit) orders when implied orders are
 not involved in each trade.
 
@@ -244,9 +245,7 @@ the existing book depths forward and nullify the last depth in the book.
 Motivated by Christensen and Woodmansey (2013), a pseudocode is shown as
 follows:
 
-<figure>
-<img src="man/figures/algo1.png" alt="Algorithm 1" />
-</figure>
+![](man/figures/algo1.png)
 
 In terms of consolidated limit order book, the function makes each book
 contains all records in both outright and implied books, fill missing
@@ -260,9 +259,7 @@ Otherwise, the implied prices will be sorted with the existing prices in
 the consolidated book, with possible book moving if applicable. A
 pseudocode is shown as follows:
 
-<figure>
-<img src="man/figures/algo2.png" alt="Algorithm 2" />
-</figure>
+![](man/figures/algo2.png)
 
 ### Feature: Anmiated order book visualization
 
@@ -272,17 +269,17 @@ and now only supports `book_bar()` function. Users can simply set
 book. Users can also adjust the FPS (frame per second) to control the
 animation playing speed. One example is given as below.
 
-<figure>
-<img src="man/figures/book_bar.gif" alt="Animated book" />
-</figure>
+![](man/figures/book_bar.gif)
 
 ## Acknowledgements
 
 Ma acknowledges the financial support from the [Bielfeldt Office for
 Futures and Options Research](https://ofor.illinois.edu/) at the
 University of Illinois at Urbana-Champaign. Ma also acknowledges prior
-practice from former OFOR members, including but not limited to Anabelle 
-Couleau, Siyu Bian. Some codes are heavily inspired by them.
+practice from former OFOR members, including but not limited to Anabelle
+Couleau and Siyu Bian. Some codes are heavily inspired by their work.
+The OFOR has signed non-disclosure agreement with the CME and only
+sample data are used here for illustration purposes.
 
 ## Help, Feature Requests and Bug Reports
 

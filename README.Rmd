@@ -1,5 +1,6 @@
 ---
-output: github_document
+output:
+  github_document: default
 ---
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
@@ -22,7 +23,7 @@ knitr::opts_chunk$set(
 
 Authors: Richie R. Ma and Brian G. Peterson
 
-The goal of cme.mdp is to clean Chicago Mercantile Exchange (CME) market data with FIX protocol more easily in the R environment, including but not limited to trade summaries, quote updates, and limit order book reconstruction. 
+The goal of `cme.mdp` is to clean Chicago Mercantile Exchange (CME) market data with FIX protocol more easily (pretty user-friendly) in the R environment, including but not limited to trade summaries, quote updates, and limit order book reconstruction.
 
 ## Introduction
 
@@ -37,14 +38,16 @@ So far, there have been Market by Price (MBP) data which aggregates all individu
 You can install the development version of cme.mdp from [GitHub](https://github.com/) with:
 
 ``` r
-# install.packages("devtools") #Install the 'devtools' package if you haven't
+install.packages("devtools")
 devtools::install_github("richie-ma/cme.mdp")
+library(cme.mdp)
 ```
 
 ## Trade summary: MBP and MBO
+
 ### MBP trade summary
 
-This is a basic example which shows you how to extract trade summary messages from the raw data. CME MDP data disseminate trade summary messages with trade price, trade size, number of orders, and trade aggressor (direction) for most of trades. Trades that are matched with implied orders might not have an explicit aggressor from the CME. 
+This is a basic example which shows you how to extract trade summary messages from the raw MBP data. CME MBP data disseminate trade summary messages with trade price, trade size, number of orders, and trade aggressor (direction) for most of trades. Trades that are matched with implied orders might not have an explicit aggressor from the CME.
 
 CME does not necessarily display the price as what we see from the Bloomberg Terminal or others and users need to know the display format of the trade price prior to using `trade_summary()` function. Otherwise, a Sunday's input needs to be given to extract this information.
 
@@ -67,9 +70,9 @@ head(gold_trades[["GCF0"]])
 
 ### MBO trade summary with order details
 
-CME MBO data further provide the order details for each trade, including both incoming (market) order and matching (limit) orders. For each trade summary, the first row shows the information of the incoming (market) order and the rest rows show the information of matching (limit) orders. 
+CME MBO data further provide the order details for each trade, including both incoming (market) order and matching (limit) orders. For each trade summary, the first row shows the information of the incoming (market) order and the rest rows show the information of matching (limit) orders.
 
-For each trade, the MBO data assign a unique trade ID and users can know the matched quantity of each matching (limit) order. Generally, the matched quantity of the incomding (market) order eqauls to the sum of matched quantity of all matching (limit) orders when implied orders are not involved in each trade.
+For each trade, the MBO data assign a unique trade ID and users can know the matched quantity of each matching (limit) order. Generally, the matched quantity of the incoming (market) order equals to the sum of matched quantity of all matching (limit) orders when implied orders are not involved in each trade.
 
 ```{r, message=FALSE}
 ## The sample data is COMEX gold futures on October 25, 2017
@@ -86,6 +89,7 @@ head(gold_trades_orders[["GCZ7"]])
 ```
 
 ## Quote messages: MBP and MBO
+
 ### MBP quote messages
 
 CME MBP quote messages show quote updates at each book depth and all relevant order management is based on the limit order book. The updates include submissions, modifications, and cancellations. CME MBP data disseminate quoted price, quoted quantity, and the number of orders in the queue for each book depth, etc. The MBP quote messages can be used directly to reconstruct the limit order book.
@@ -126,6 +130,7 @@ head(sp500_quotes_orders[["ESZ7"]])
 ```
 
 ## Order book
+
 ### Reconstruction: Pseudo code
 
 The limit order book reconstruction is based on the quote messages for each single tradeable contract. When the quote update is addition, one needs to move the existing book depths backward and insert information (e.g., price, quantity, number of orders). When the quote update is modification, one just needs to revise the information of that book depth. Finally, when the quote update is cancellation, one needs to move the existing book depths forward and nullify the last depth in the book. Motivated by Christensen and Woodmansey (2013), a pseudocode is shown as follows:
@@ -143,11 +148,13 @@ This package also provides an animated order book application for users and now 
 ![](man/figures/book_bar.gif)
 
 ## Acknowledgements
-Ma acknowledges the financial support from the [Bielfeldt Office for Futures and Options Research](https://ofor.illinois.edu/) at the University of Illinois at Urbana-Champaign.
+
+Ma acknowledges the financial support from the [Bielfeldt Office for Futures and Options Research](https://ofor.illinois.edu/) at the University of Illinois at Urbana-Champaign. Ma also acknowledges prior practice from former OFOR members, including but not limited to Anabelle Couleau and Siyu Bian. Some codes are heavily inspired by their work. The OFOR has signed non-disclosure agreement with the CME and only sample data are used here for illustration purposes.
 
 ## Help, Feature Requests and Bug Reports
+
 Please post an issue on the [GitHub repository](https://github.com/richie-ma/cme.mdp/issues).
 
 ## References
-Christensen, Hugh, R.Woodmansey. “Prediction of Hidden Liquidity in the Limit Order Book of GLOBEX Futures.” Journal of Trading, Summer 2013, pp. 68–95.
 
+Christensen, Hugh, R.Woodmansey. “Prediction of Hidden Liquidity in the Limit Order Book of GLOBEX Futures.” Journal of Trading, Summer 2013, pp. 68–95.
