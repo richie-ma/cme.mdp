@@ -107,7 +107,7 @@ tbbo <- function(trades,
     ### Only assign trades that are not defined by the CME
 
     if (0 %in% tbbo[, unique(agg)] == FALSE) {
-      stop( = )
+      stop('All trades are defined by the CME directly. No need to redefine')
 
     }
 
