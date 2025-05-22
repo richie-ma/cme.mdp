@@ -30,8 +30,7 @@ Imports:
     stringr,
     ggplot2,
     ggnewscale (>= 0.5.1),
-    scales,
-    progress
+    scales
 Encoding: UTF-8
 LazyData: true
 Suggests: 

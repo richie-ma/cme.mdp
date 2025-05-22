@@ -6,6 +6,7 @@
 \usage{
 mbo_quote_queue(
   mbo_input,
+  date,
   implied_quotes = FALSE,
   price_displayformat = NULL,
   sunday_input = NULL
@@ -13,6 +14,10 @@ mbo_quote_queue(
 }
 \arguments{
 \item{mbo_input}{A CME MBO raw data.}
+
+\item{date}{Trading date associated with the raw data, which can be found in
+the file name easily in \code{YYYYMMDD} format. This argument is required to select
+the parsing format.}
 
 \item{implied_quotes}{\code{FALSE} by default. if \code{TRUE}, return the implied quote messages.}
 

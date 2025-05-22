@@ -4,7 +4,7 @@
 \alias{statistics}
 \title{Extract daily and session statistics from the CME Market by Price and/or Market by Order data}
 \usage{
-statistics(input, date, security = NULL)
+statistics(input, date)
 }
 \arguments{
 \item{input}{CME MBO/MBP data}
@@ -12,14 +12,9 @@ statistics(input, date, security = NULL)
 \item{date}{Trading date associated with the raw data, which can be found in
 the file name easily in \code{YYYYMMDD} format. This argument is required to select
 the parsing format.}
-
-\item{security}{A symbol of a specific contract of a financial security, should be
-in the format like "CLK9" (crude oil), "ESH9" (E-mini S&P 500), etc. These can
-be obtained from CME website for a contract specification.}
 }
 \value{
-a data.table contains the meta data of either a specific contract, or
-all tradeable contracts of a financial security traded in the CME.
+a data.table contains the statistics of all tradeable contracts of a security in the CME.
 }
 \description{
 `statistics()` extracts daily and session statistics from the CME Market by Price
@@ -47,11 +42,8 @@ open interest, trading volume, low price, high price, highest bid, lowest offer,
 \examples{
 # This function requires a CME data license to run
 # Example showing how to extract daily and session statistics
-# Know the specific security (e,g., ESH9)
 \dontrun{
-es.stat <- statistics(file, "2019-01-07", 'ESH9')
-
-# For all tradable contracts in E-mini S&P 500 futures
+All tradable contracts in E-mini S&P 500 futures
 es.stat <- statistics(file, "2019-01-07")
 }
 

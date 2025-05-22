@@ -1,5 +1,6 @@
 
 
+
 #' Reconstruct limit order book(s) from the quote messages extracted from the CME Market by Price data
 #'
 #'`order_book()` reconstructs limit order book(s) from the quote messages extracted from the CME Market by Price data.
@@ -57,12 +58,14 @@
 #' # Know book depth
 #' \dontrun{
 #' book <- order_book(weekly_msg_quotes_list, "2019-01-07", level = 10)
+#' }
 #'
 mbp_order_book <- function(mbp_quote_msgs_list,
                            level = NULL,
                            consolidate = TRUE,
                            security = NULL) {
-  Date <- Code <- Implied <- Symbol  <- Seq <- NULL
+  Date <- Code <- Implied <- Symbol  <- Seq <- Side <- qty_diff <- Update <- Qty <- PX <-
+    ord_diff <- Ord <- Qty <- PX_depth <- current_price <- depth <- NULL
 
   ### Order book reconstruction is based on each contract
 
@@ -120,19 +123,19 @@ mbp_order_book <- function(mbp_quote_msgs_list,
     message_outright[, qty_diff := fifelse(shift(Update, 1, "lag", fill = NA) !=
                                              2,
                                            Qty - shift(Qty, 1, "lag", fill = NA),
-                                           Qty), by = .(Side, PX)]
+                                           Qty), by = c("Side", "PX")]
 
 
     message_outright[, ord_diff := fifelse(shift(Update, 1, "lag", fill = NA) !=
                                              2,
                                            Ord - shift(Ord, 1, "lag", fill = NA),
-                                           Ord), by = .(Side, PX)]
+                                           Ord), by = c("Side", "PX")]
 
     message_outright[Update == 2, `:=`(qty_diff = -Qty, ord_diff = -Ord)]
     message_outright[is.na(qty_diff), qty_diff := Qty]
     message_outright[is.na(ord_diff), ord_diff := Ord]
     message_outright[, `:=`(Qty = cumsum(qty_diff), Ord = cumsum(ord_diff)), by =
-                       .(Side, PX)]
+                       c("Side", "PX")]
 
     setkey(message_outright, Seq)
 
@@ -146,7 +149,7 @@ mbp_order_book <- function(mbp_quote_msgs_list,
       message_implied[, qty_diff := fifelse(shift(Update, 1, "lag", fill = NA) !=
                                               2,
                                             Qty - shift(Qty, 1, "lag", fill = NA),
-                                            Qty), by = .(Side, PX)]
+                                            Qty), by = c("Side", "PX")]
 
 
       ## deletion quantity and orders should be negative
@@ -156,7 +159,7 @@ mbp_order_book <- function(mbp_quote_msgs_list,
 
       ## calculate the cumsum
 
-      message_implied[, `:=`(Qty = cumsum(qty_diff)), by = .(Side, PX)]
+      message_implied[, `:=`(Qty = cumsum(qty_diff)), by = c("Side", "PX")]
 
 
 
@@ -290,7 +293,7 @@ mbp_order_book <- function(mbp_quote_msgs_list,
         setkey(conso_quotes, Seq)
 
         ### aggregate the implied quantity and outright quantity
-        conso_quotes[, `:=`(Qty = cumsum(qty_diff), Ord = cumsum(ord_diff)), by = .(Side, PX)]
+        conso_quotes[, `:=`(Qty = cumsum(qty_diff), Ord = cumsum(ord_diff)), by = c("Side", "PX")]
         LOB_conso <- book_reconstruction_main(conso_quotes)
 
       } else{
@@ -315,5 +318,3 @@ mbp_order_book <- function(mbp_quote_msgs_list,
 
 
 }
-
-book_test <- mbp_order_book(test, consolidate = TRUE, security = 'ZCZ8')

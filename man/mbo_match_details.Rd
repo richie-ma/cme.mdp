@@ -4,10 +4,19 @@
 \alias{mbo_match_details}
 \title{Extract trade summary with order details from CME Market by Order data}
 \usage{
-mbo_match_details(mbo_input, price_displayformat = NULL, sunday_input = NULL)
+mbo_match_details(
+  mbo_input,
+  date,
+  price_displayformat = NULL,
+  sunday_input = NULL
+)
 }
 \arguments{
 \item{mbo_input}{A CME MBO raw data}
+
+\item{date}{Trading date associated with the raw data, which can be found in
+the file name easily in \code{YYYYMMDD} format. This argument is required to select
+the parsing format.}
 
 \item{price_displayformat}{Display format of trade price, which could be 1,
 0.01, or 0.001, etc. If it is unknown, the nearest Sunday's (not a
