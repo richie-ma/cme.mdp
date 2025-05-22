@@ -1,7 +1,7 @@
 Package: cme.mdp
 Type: Package
 Title: Clean and Analyze Chicago Mercantile Exchange Market Data 
-Version: 0.1.0
+Version: 0.1.1
 Authors@R: c(
     person(
       "Richie", "Ma",

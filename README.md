@@ -4,6 +4,7 @@
 # cme.mdp: Clean and Analyze Chicago Mercantile Exchange Market Data in R
 
 <!-- badges: start -->
+
 <!-- badges: end -->
 
 Authors: Richie R. Ma and Brian G. Peterson
@@ -12,6 +13,12 @@ The goal of `cme.mdp` is to clean Chicago Mercantile Exchange (CME)
 market data with FIX protocol more easily (pretty user-friendly) in the
 R environment, including but not limited to trade summaries, quote
 updates, and limit order book reconstruction.
+
+## Updates
+
+Version 0.1.1 substantially update the `order_book` function and the
+previous one is deprecated. The new function does not have any explicit
+loops, which can improve the speed of processing.
 
 ## Introduction
 
