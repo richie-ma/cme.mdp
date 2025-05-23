@@ -16,7 +16,7 @@ updates, and limit order book reconstruction.
 
 ## Updates
 
-Version 0.1.1 substantially update the `order_book` function and the
+Version 0.1.1 substantially updates the `order_book` function and the
 previous one is deprecated. The new function does not have any explicit
 loops, which can improve the speed of processing.
 
