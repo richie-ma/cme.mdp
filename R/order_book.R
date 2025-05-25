@@ -325,4 +325,3 @@ order_book <- function(mbp_quote_msgs_list,
 
 }
 
-test_book <- order_book(test, security = 'ZSN0')
