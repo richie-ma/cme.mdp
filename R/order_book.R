@@ -1,6 +1,7 @@
 
 
 
+
 #' Reconstruct limit order book(s) from the quote messages extracted from the CME Market by Price data
 #'
 #'`order_book()` reconstructs limit order book(s) from the quote messages extracted from the CME Market by Price data.
@@ -61,9 +62,9 @@
 #' }
 #'
 order_book <- function(mbp_quote_msgs_list,
-                           level = NULL,
-                           consolidate = TRUE,
-                           security = NULL) {
+                       level = NULL,
+                       consolidate = TRUE,
+                       security = NULL) {
   Date <- Code <- Implied <- Symbol  <- Seq <- Side <- qty_diff <- Update <- Qty <- PX <-
     ord_diff <- Ord <- Qty <- PX_depth <- current_price <- depth <- NULL
 
@@ -237,22 +238,27 @@ order_book <- function(mbp_quote_msgs_list,
 
       }
 
-      quotes <- rbind(bid, offer)
-      setkey(quotes, Seq)
+      if (dim(bid)[1] != 0 | dim(offer)[1] != 0) {
+        quotes <- rbind(bid, offer)
+        setkey(quotes, Seq)
 
-      quotes[, Side := fifelse(Side == 0, "Bid", "Ask")]
+        quotes[, Side := fifelse(Side == 0, "Bid", "Ask")]
 
-      book <- dcast(
-        quotes,
-        Date + MsgSeq + SendingTime + TransactTime + Code + Seq ~ Side + PX_depth,
-        value.var = c("PX", "Qty", "Ord")
-      )
-      setkey(book, Seq)
+        book <- dcast(
+          quotes,
+          Date + MsgSeq + SendingTime + TransactTime + Code + Seq ~ Side + PX_depth,
+          value.var = c("PX", "Qty", "Ord")
+        )
+        setkey(book, Seq)
 
-      book[, 7:dim(book)[2]] <- nafill(book[, 7:dim(book)[2]], "locf")
-      book[, 7:dim(book)[2]] <- nafill(book[, 7:dim(book)[2]], "const", 0)
+        book[, 7:dim(book)[2]] <- nafill(book[, 7:dim(book)[2]], "locf")
+        book[, 7:dim(book)[2]] <- nafill(book[, 7:dim(book)[2]], "const", 0)
+        return(book)
+      }else{
+        return(NULL)
+      }
 
-      return(book)
+
 
     }
 
@@ -318,3 +324,5 @@ order_book <- function(mbp_quote_msgs_list,
 
 
 }
+
+test_book <- order_book(test, security = 'ZSN0')
