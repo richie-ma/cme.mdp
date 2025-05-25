@@ -60,7 +60,7 @@
 #' book <- order_book(weekly_msg_quotes_list, "2019-01-07", level = 10)
 #' }
 #'
-mbp_order_book <- function(mbp_quote_msgs_list,
+order_book <- function(mbp_quote_msgs_list,
                            level = NULL,
                            consolidate = TRUE,
                            security = NULL) {
