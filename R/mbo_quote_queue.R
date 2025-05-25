@@ -250,12 +250,12 @@ mbo_quote_queue <- function(mbo_input,date,
     setnames(
       order_part2.order,
       c("V2", "V3", "V4", "V5", "V6"),
-      c("Order_id", "Order_priority", "Qty", "Ref_ID", "Update")
+      c("Order_id", "Order_priority", "Qty", "Ref_ID", "OrderUpdate")
     )
     order_part2.details <- order_part2.order
 
     info_part2 <- str_match_all(order_part2,
-                                "269=([^,]*),55=([^,]*),83=([^,]*),270=([^,]*),271=([^,]*),")
+                                "279=([^,]*),269=([^,]*),55=([^,]*),83=([^,]*),270=([^,]*),271=([^,]*),346=([^,]*),1023=([^,]*),")
     info_part2.time <- str_extract_all(order_part2,
                                        "75=([^,]*),34=([^,]*),52=([^,]*),60=([^,]*),")
     n_row_3 <- sapply(info_part2, nrow)
@@ -287,8 +287,8 @@ mbo_quote_queue <- function(mbo_input,date,
     info_part2 <- rbindlist(info_part2, idcol = FALSE)
 
     setnames(info_part2,
-             c("V2", "V3", "V4", "V5", "V6"),
-             c("Side", "Code", "Seq", "PX", "Qty"))
+             c("V2", "V3", "V4", "V5", "V6", "V7", "V8", "V9"),
+             c("Update","Side", "Code", "Seq", "PX", "Qty", "Ord", "PX_depth"))
 
     order_part2.info <- cbind(info_part2.time, info_part2)
     #order_part2.info <- order_part2.info[, -6]
@@ -300,13 +300,15 @@ mbo_quote_queue <- function(mbo_input,date,
     order_part2.details$Ref_ID <- as.numeric(order_part2.details$Ref_ID)
     order_part2.details$Order_priority <- as.numeric(order_part2.details$Order_priority)
     order_part2.details$Qty <- as.numeric(order_part2.details$Qty)
-    order_part2.details$Update <- as.numeric(order_part2.details$Update)
+    order_part2.details$OrderUpdate <- as.numeric(order_part2.details$OrderUpdate)
     order_part2.details$.id <- as.numeric(order_part2.details$.id)
 
     order_part2.info$Side <- as.numeric(order_part2.info$Side)
     order_part2.info$Seq <- as.numeric(order_part2.info$Seq)
     order_part2.info$PX <- as.numeric(order_part2.info$PX)
     order_part2.info$Qty <- as.numeric(order_part2.info$Qty)
+    order_part2.info$Ord <- as.numeric(order_part2.info$Ord)
+    order_part2.info$PX_depth <- as.numeric(order_part2.info$PX_depth)
     order_part2.info$.id <- as.numeric(order_part2.info$.id)
 
     order_part2.info[, Ref_ID := 1:.N, by = c(".id")] ## here note that it should be sort by sequence number while not MsgSeq. Seq # is unique in
@@ -317,8 +319,8 @@ mbo_quote_queue <- function(mbo_input,date,
     part2_order <- order_part2.info[, -c("Qty")][order_part2.details[, c("Order_id",
                                                                          "Order_priority",
                                                                          "Qty",
-                                                                         "Ref_ID","Update",
-                                                                         ".id")], on = c(".id", "Ref_ID"), nomatch = NULL][, -c("Ref_ID", ".id")]
+                                                                         "Ref_ID","OrderUpdate",
+                                                                         ".id")], on = c(".id", "Ref_ID"), nomatch=NULL][, -c("Ref_ID", ".id")]
     mbo[[3]] <- part2_order
     rm(order_part2.details, order_part2.info, part2_order)
 
