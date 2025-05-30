@@ -296,7 +296,7 @@ order_book <- function(mbp_quote_msgs_list,
 
         conso_quotes <- rbind(message_outright, message_implied, fill = TRUE)
         conso_quotes[is.na(ord_diff), ord_diff := 0]
-        setkey(conso_quotes, Seq)
+        setkey(conso_quotes, Date, Seq)
 
         ### aggregate the implied quantity and outright quantity
         conso_quotes[, `:=`(Qty = cumsum(qty_diff), Ord = cumsum(ord_diff)), by = c("Side", "PX")]
