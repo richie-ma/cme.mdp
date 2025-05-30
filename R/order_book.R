@@ -240,7 +240,7 @@ order_book <- function(mbp_quote_msgs_list,
 
       if (dim(bid)[1] != 0 | dim(offer)[1] != 0) {
         quotes <- rbind(bid, offer)
-        setkey(quotes, Seq)
+        setkey(quotes, Date, Seq)
 
         quotes[, Side := fifelse(Side == 0, "Bid", "Ask")]
 
