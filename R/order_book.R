@@ -106,9 +106,10 @@ order_book <- function(mbp_quote_msgs_list,
     messages$Ord <- as.numeric(messages$Ord)
     messages$PX_depth <- as.numeric(messages$PX_depth)
     messages$MsgSeq <- as.numeric(messages$MsgSeq)
+    messages$Date <- as.Date(messages$Date, "%Y%m%d")
 
 
-    setkey(messages, Seq)
+    setkey(messages, Date, Seq)
 
     messages[Side == "E", Side := 0]
     messages[Side == "F", Side := 1]
@@ -138,7 +139,7 @@ order_book <- function(mbp_quote_msgs_list,
     message_outright[, `:=`(Qty = cumsum(qty_diff), Ord = cumsum(ord_diff)), by =
                        c("Side", "PX")]
 
-    setkey(message_outright, Seq)
+    setkey(message_outright, Date, Seq)
 
     if ("Y" %in% messages[, unique(Implied)]) {
       message_implied <- messages[Implied == "Y"]
@@ -164,7 +165,7 @@ order_book <- function(mbp_quote_msgs_list,
 
 
 
-      setkey(message_implied, Seq)
+      setkey(message_implied, Date, Seq)
     }
 
 
@@ -191,15 +192,14 @@ order_book <- function(mbp_quote_msgs_list,
             bid_level <- level
           }
         }
-        bid_rank <- dcast(bid, Seq ~ PX_depth, value.var = c("PX"))
-        bid_rank[, 2:(bid_level + 1)] <- nafill(bid_rank[, 2:(bid_level + 1)], "locf")
-        bid_rank[, 2:(bid_level + 1)] <- nafill(bid_rank[, 2:(bid_level + 1)], "const", 0)
+        bid_rank <- dcast(bid, Date + Seq ~ PX_depth, value.var = c("PX"))
+        bid_rank[, 3:(bid_level + 2)] <- nafill(bid_rank[, 3:(bid_level + 2)], "locf")
+        bid_rank[, 3:(bid_level + 2)] <- nafill(bid_rank[, 3:(bid_level + 2)], "const", 0)
         bid_rank[, current_price := bid[, PX]]
 
-
         bid_rank[, depth := apply(.SD, 1, function(row) {
-          which(unlist(row)[(bid_level + 2)] == sort(unique(unlist(row)[2:(bid_level + 1)][which(unlist(row)[2:(bid_level +
-                                                                                                                  1)] >
+          which(unlist(row)[(bid_level + 3)] == sort(unique(unlist(row)[3:(bid_level + 2)][which(unlist(row)[3:(bid_level +
+                                                                                                                  2)] >
                                                                                                    0)]), decreasing = TRUE))
         })]
 
@@ -223,14 +223,14 @@ order_book <- function(mbp_quote_msgs_list,
         }
 
 
-        offer_rank <- dcast(offer, Seq ~ PX_depth, value.var = c("PX"))
-        offer_rank[, 2:(offer_level + 1)] <- nafill(offer_rank[, 2:(offer_level + 1)], "locf")
-        offer_rank[, 2:(offer_level + 1)] <- nafill(offer_rank[, 2:(offer_level + 1)], "const", 0)
+        offer_rank <- dcast(offer, Date + Seq ~ PX_depth, value.var = c("PX"))
+        offer_rank[, 3:(offer_level + 2)] <- nafill(offer_rank[, 3:(offer_level + 2)], "locf")
+        offer_rank[, 3:(offer_level + 2)] <- nafill(offer_rank[, 3:(offer_level + 2)], "const", 0)
         offer_rank[, current_price := offer[, PX]]
 
         offer_rank[, depth := apply(.SD, 1, function(row) {
-          which(unlist(row)[(offer_level + 2)] == sort(unique(unlist(row)[2:(offer_level + 1)][which(unlist(row)[2:(offer_level +
-                                                                                                                      1)] >
+          which(unlist(row)[(offer_level + 3)] == sort(unique(unlist(row)[3:(offer_level + 2)][which(unlist(row)[3:(offer_level +
+                                                                                                                      2)] >
                                                                                                        0)]), decreasing = FALSE))
         })]
 
@@ -249,7 +249,7 @@ order_book <- function(mbp_quote_msgs_list,
           Date + MsgSeq + SendingTime + TransactTime + Code + Seq ~ Side + PX_depth,
           value.var = c("PX", "Qty", "Ord")
         )
-        setkey(book, Seq)
+        setkey(book, Date, Seq)
 
         book[, 7:dim(book)[2]] <- nafill(book[, 7:dim(book)[2]], "locf")
         book[, 7:dim(book)[2]] <- nafill(book[, 7:dim(book)[2]], "const", 0)
