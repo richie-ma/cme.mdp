@@ -36,7 +36,7 @@ statistical procedures related to market liquidity (in later version).
 
 ## CME market data overview
 
-So far, there have been Market by Price (MBP) data which aggregates all
+The CME distributes Market by Price (MBP) data which aggregates all
 individual order information (e.g., size) at every price level, and
 Market by Order (MBO) data that can show all individual order details
 (e.g., order priority) at each price level. The MBO data also provide
@@ -47,7 +47,7 @@ assign the trade direction more precisely than the MBP and no quote
 merge is required for almost all trades. In general, CME will
 disseminate the MBP incremental updates followed by the order-level
 details (e.g., submission, cancellation) that describes the reason for
-MBP updates. Our package considers the above characters and can process
+MBP updates. Our package considers the above characteristics and can process
 both the MBP and MBO data including quote messages and trade summaries.
 
 ## Installation
@@ -56,8 +56,8 @@ You can install the development version of cme.mdp from
 [GitHub](https://github.com/) with:
 
 ``` r
-install.packages("devtools")
-devtools::install_github("richie-ma/cme.mdp")
+# install.packages("remotes") # if not installed
+remotes::install_github("richie-ma/cme.mdp")
 library(cme.mdp)
 ```
 
