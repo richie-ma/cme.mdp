@@ -243,8 +243,8 @@ order_book <- function(mbp_quote_msgs_list,
         setkey(quotes, Date, Seq)
 
         quotes[, Side := fifelse(Side == 0, "Bid", "Ask")]
-        quotes$SendingTime <- as.POSIXct(quotes$SendingTime)
-        quotes$TransactTime <- as.POSIXct(quotes$TransactTime)
+
+
         quotes$Seq <- as.numeric(quotes$Seq)
         quotes$PX <- as.numeric(quotes$PX)
         quotes$Qty <- as.numeric(quotes$Qty)
