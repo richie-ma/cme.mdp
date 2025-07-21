@@ -16,7 +16,7 @@ updates, and limit order book reconstruction.
 
 ## Updates
 
-I Manually restored the `order_book()` function from commit `3e4bd94` as some necessary loops cannot be avoided in processing consolidated limit order book.
+I manually restored the `order_book()` function from commit `3e4bd94` as some necessary loops cannot be avoided in processing consolidated limit order book.
 
 ## Introduction
 
