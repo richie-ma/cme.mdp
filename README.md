@@ -16,9 +16,7 @@ updates, and limit order book reconstruction.
 
 ## Updates
 
-Version 0.1.1 substantially updates the `order_book` function and the
-previous one is deprecated. The new function does not have any explicit
-loops, which can improve the speed of processing.
+I manually restored the `order_book()` function from commit `3e4bd94` as some necessary loops cannot be avoided in processing consolidated limit order book.
 
 ## Introduction
 
