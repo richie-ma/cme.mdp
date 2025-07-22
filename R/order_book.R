@@ -22,7 +22,7 @@
 #' limit order books for all tradeable contracts in a trading day stored in a list.
 #' @export
 #'
-#' @import data.table progress
+#' @import data.table
 #'
 #' @section Why \code{mdp_quote_msgs_list} needs Sunday's file:
 #' One should store all quote messages extracted from the MBP data including Sunday's file
