@@ -188,7 +188,7 @@ order_book <- function(mdp_quote_msgs_list,
 
 
       for (k in 1:dim(msg)[1]) {
-        pb_book$tick()
+
         #  print(k)
 
         LOB <- book(level)
@@ -559,7 +559,7 @@ order_book <- function(mdp_quote_msgs_list,
 
 
             for (a in 1:dim(messages)[1]) {
-              pb_conso_book$tick()
+
               LOB_conso <- book(level)
 
 
