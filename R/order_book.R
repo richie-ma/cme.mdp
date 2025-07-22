@@ -183,12 +183,7 @@ order_book <- function(mdp_quote_msgs_list,
     book1 <- function(msg, level, ...) {
       book_list <- list()
 
-      pb_book <- progress_bar$new(
-        format = "  Processing outright/implied book :percent[:bar] :current/:total [:elapsed/:eta, :rate]",
-        total = dim(msg)[1],
-        clear = FALSE,
-        width = 100
-      )
+
 
 
 
@@ -561,12 +556,6 @@ order_book <- function(mdp_quote_msgs_list,
             ask_px1_index <- 3 * level + 5
 
 
-            pb_conso_book <- progress_bar$new(
-              format = "  Processing consolidated book :percent[:bar] :current/:total [:elapsed/:eta, :rate]",
-              total = dim(messages)[1],
-              clear = FALSE,
-              width = 100
-            )
 
 
             for (a in 1:dim(messages)[1]) {
