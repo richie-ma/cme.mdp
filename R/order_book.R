@@ -537,7 +537,7 @@ order_book <- function(mdp_quote_msgs_list,
             setkey(LOB_outright_new, Seq)
             setnafill(LOB_outright_new,
                       'locf',
-                      cols = colnames(LOB_outright_new)[5:64])
+                      cols = colnames(LOB_outright_new)[5:(level * 2 * 3 + 4)])
 
             LOB_outright_new <- as.matrix(LOB_outright_new)
 
