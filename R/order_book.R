@@ -789,9 +789,12 @@ order_book <- function(mdp_quote_msgs_list,
           LOB_conso$Seq <- messages[, "Seq"]
           LOB_conso$MsgSeq <- messages[, "MsgSeq"]
           LOB_conso$SendingTime <- messages[, "SendingTime"]
+          if("TransactTime" %in% colnames(messages)){
           LOB_conso$TransactTime <- messages[, "TransactTime"]
-          LOB_conso$Code <- messages[, "Code"]
           setcolorder(LOB_conso, "SendingTime", before = "TransactTime")
+          }
+          LOB_conso$Code <- messages[, "Code"]
+
 
           return(LOB_conso)
 
@@ -812,9 +815,12 @@ order_book <- function(mdp_quote_msgs_list,
       LOB_outright$Seq <- message_outright[, "Seq"]
       LOB_outright$MsgSeq <- message_outright[, "MsgSeq"]
       LOB_outright$SendingTime <- message_outright[, "SendingTime"]
-      LOB_outright$TransactTime <- message_outright[, "TransactTime"]
+      if("TransactTime" %in% colnames(message_outright)){
+        LOB_outright$TransactTime <- message_outright[, "TransactTime"]
+        setcolorder(LOB_outright, "SendingTime", before = "TransactTime")
+      }
       LOB_outright$Code <- message_outright[, "Code"]
-      setcolorder(LOB_outright, "SendingTime", before = "TransactTime")
+
 
     }
 
@@ -822,9 +828,13 @@ order_book <- function(mdp_quote_msgs_list,
       LOB_implied$Seq <- message_implied[, "Seq"]
       LOB_implied$MsgSeq <- message_implied[, "MsgSeq"]
       LOB_implied$SendingTime <- message_implied[, "SendingTime"]
-      LOB_implied$TransactTime <- message_implied[, "TransactTime"]
+      if("TransactTime" %in% colnames(message_outright)){
+        LOB_implied$TransactTime <- message_implied[, "TransactTime"]
+        setcolorder(LOB_implied, "SendingTime", before = "TransactTime")
+      }
+
       LOB_implied$Code <- message_implied[, "Code"]
-      setcolorder(LOB_implied, "SendingTime", before = "TransactTime")
+
     }
 
     results <- list(
