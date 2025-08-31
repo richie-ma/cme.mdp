@@ -91,13 +91,16 @@ status <- function(input, date) {
       Index1 <- cbind(Index1.info, Index1)
       rm(Index1.info)
 
-      Index1 <- Index1[SessionID == 0 | SessionID == 1]
-      Index1[, SessionID := fifelse(SessionID == 0, "preopen", "opening")]
+      Index1 <- Index1[SessionID == 0 | SessionID == 1 | SessionID == 2]
+      Index1[, SessionID := fifelse(SessionID == 0, "preopen",
+                                    fifelse(SessionID ==1, "opening", "continuous"))]
       Index1$MsgSeq <- as.numeric(Index1$MsgSeq)
 
       setkey(Index1, Code, SessionID, Seq)
 
       Session_info <- Index1
+      Session_info <-Session_info[, .SD[1], by=.(Date, Code, SessionID)]
+
 
     }
 
