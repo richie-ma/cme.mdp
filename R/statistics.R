@@ -111,6 +111,8 @@ statistics <- function(input, date) {
         setkey(open, Code, Seq)
 
 
+      }else{
+        open <- NA
       }
       ######################## SETTLE ###########################################
       if (length(SETTLE) != 0) {
@@ -135,6 +137,8 @@ statistics <- function(input, date) {
 
         setkey(settle, Code, Seq)
 
+      }else{
+        settle <- NA
       }
       #################### SESSION HIGH PX #######################################
       if (length(HIGH_PX) != 0) {
@@ -161,6 +165,8 @@ statistics <- function(input, date) {
         setkey(high_px, Code, Seq)
 
 
+      }else{
+        high_px <- NA
       }
       ############### SESSION LOW PRICE ###################################
       if (length(LOW_PX) != 0) {
@@ -186,6 +192,8 @@ statistics <- function(input, date) {
         setkey(low_px, Code, Seq)
 
 
+      }else{
+        low_px <- NA
       }
       ############### SESSION HIGH BID ###################################
       if (length(HIGH_BID) != 0) {
@@ -212,6 +220,8 @@ statistics <- function(input, date) {
         setkey(high_bid, Code, Seq)
 
 
+      }else{
+        high_bid <- NA
       }
       ############# SESSION LOW OFFER ###############################
       if (length(LOW_OFFER) != 0) {
@@ -237,6 +247,8 @@ statistics <- function(input, date) {
 
         setkey(low_offer, Code, Seq)
 
+      }else{
+        low_offer <- NA
       }
       ############# VOLUME  ###############################
       if (length(VOLUME) != 0) {
@@ -261,6 +273,8 @@ statistics <- function(input, date) {
 
         setkey(volume, Code, Seq)
 
+      }else{
+        volume <- NA
       }
       ############# OPEN INTEREST  ###############################
       if (length(OPEN_INT) != 0) {
@@ -287,6 +301,8 @@ statistics <- function(input, date) {
         setkey(open_int, Code, Seq)
 
 
+      }else{
+        open_int <- NA
       }
 
       ############# LIMIT  ###############################
@@ -317,7 +333,10 @@ statistics <- function(input, date) {
         rm(LIMIT)
 
 
+      }else{
+        limit <- NA
       }
+
 
       if (length(SIMULATE_SELL) != 0) {
         simulate_sell <- str_match_all(SIMULATE_SELL,
@@ -345,6 +364,8 @@ statistics <- function(input, date) {
 
 
 
+      }else{
+        simulate_sell <- NA
       }
 
       if (length(SIMULATE_BUY) != 0) {
@@ -372,7 +393,10 @@ statistics <- function(input, date) {
         setkey(simulate_buy, Code, Seq)
 
 
+      }else{
+        simulate_buy <- NA
       }
+
 
       info_list <- list(
         open = open,
@@ -445,6 +469,8 @@ statistics <- function(input, date) {
 
         setkey(open, Code, Seq)
 
+      }else{
+        open <- NA
       }
       ######################## SETTLE ###########################################
       if (length(SETTLE) != 0) {
@@ -469,6 +495,8 @@ statistics <- function(input, date) {
 
         setkey(settle, Code, Seq)
 
+      }else{
+        settle <- NA
       }
       #################### SESSION HIGH PX #######################################
       if (length(HIGH_PX) != 0) {
@@ -493,6 +521,8 @@ statistics <- function(input, date) {
 
         setkey(high_px, Code, Seq)
 
+      }else{
+        high_px <- NA
       }
       ############### SESSION LOW PRICE ###################################
       if (length(LOW_PX) != 0) {
@@ -518,6 +548,8 @@ statistics <- function(input, date) {
         setkey(low_px, Code, Seq)
 
 
+      }else{
+        low_px <- NA
       }
       ############### SESSION HIGH BID ###################################
       if (length(HIGH_BID) != 0) {
@@ -543,6 +575,8 @@ statistics <- function(input, date) {
 
         setkey(high_bid, Code, Seq)
 
+      }else{
+        high_bid <- NA
       }
       ############# SESSION LOW OFFER ###############################
       if (length(LOW_OFFER) != 0) {
@@ -568,6 +602,8 @@ statistics <- function(input, date) {
 
         setkey(low_offer, Code, Seq)
 
+      }else{
+        low_offer <- NA
       }
       ############# VOLUME  ###############################
       if (length(VOLUME) != 0) {
@@ -593,6 +629,8 @@ statistics <- function(input, date) {
         setkey(volume, Code, Seq)
 
 
+      }else{
+        volume <- NA
       }
       ############# OPEN INTEREST  ###############################
       if (length(OPEN_INT) != 0) {
@@ -619,6 +657,8 @@ statistics <- function(input, date) {
         setkey(open_int, Code, Seq)
 
 
+      }else{
+        open_int <- NA
       }
       ############# ELECTRONIC VOLUME  ###############################
       if (length(ELEC_VOLUME) != 0) {
@@ -645,6 +685,8 @@ statistics <- function(input, date) {
 
         setkey(elec_volume, Code, Seq)
 
+      }else{
+        elec_volume <- NA
       }
       ############# LIMIT  ###############################
       if (length(LIMIT) != 0) {
@@ -682,6 +724,8 @@ statistics <- function(input, date) {
         setkey(limit, Code, Seq)
 
 
+      }else{
+        limit <- NA
       }
 
       info_list <- list(
