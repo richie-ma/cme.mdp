@@ -81,12 +81,12 @@ status <- function(input, date) {
       Index1$SessionID <- as.numeric(Index1$SessionID)
 
 
-      Index1.info <- unlist(str_extract_all(Index, "34=([^,]*),52=([^,]*),75=([^,]*),"))
+      Index1.info <- unlist(str_extract_all(Index, "34=([^,]*),52=([^,]*),"))
       Index1.info <- str_dup(Index1.info, n_row)
 
-      Index1.info <- str_match_all(Index1.info, "34=([^,]*),52=([^,]*),75=([^,]*),")
+      Index1.info <- str_match_all(Index1.info, "34=([^,]*),52=([^,]*)")
       Index1.info <- as.data.table(do.call(rbind, Index1.info))[, -1]
-      names(Index1.info)[c(1:3)] <- c("MsgSeq", "Time", "Date")
+      names(Index1.info)[c(1:2)] <- c("MsgSeq", "Time")
 
       Index1 <- cbind(Index1.info, Index1)
       rm(Index1.info)
@@ -99,7 +99,7 @@ status <- function(input, date) {
       setkey(Index1, Code, SessionID, Seq)
 
       Session_info <- Index1
-      Session_info <-Session_info[, .SD[1], by=.(Date, Code, SessionID)]
+      Session_info <-Session_info[, .SD[1], by=.(Code, SessionID)]
 
 
     }
