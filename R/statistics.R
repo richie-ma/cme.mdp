@@ -422,7 +422,7 @@ statistics <- function(input, date) {
       data <- str_replace_all(data,
                               "1128=([^,]*),9=([^,]*),35=([^,]*),49=([^,]*),",
                               "")
-      data <- str_replace_all(data, ",34=([^,]*),", ",")
+
       data <- str_replace_all(data, ",5799=([^,]*),", ",")
       data <- str_replace_all(data, ",268=([^,]*),", ",")
       data <- str_replace_all(data, ",279=([^,]*),", ",")
@@ -451,16 +451,16 @@ statistics <- function(input, date) {
                               "269=4,55=([^,]*),83=([^,]*),270=([^,]*),286=([^,]*),")
 
         n_row <- sapply(open, nrow)
-        open.info <- unlist(str_extract_all(OPEN, "75=([^,]*),52=([^,]*),60=([^,]*),"))
+        open.info <- unlist(str_extract_all(OPEN, "75=([^,]*),34=([^,]*),52=([^,]*),60=([^,]*),"))
         open.info <- str_dup(open.info, n_row)
         open <- as.data.table(do.call(rbind, open))[, -1]
         names(open)[c(1:4)] <- c("Code", "Seq", "OPEN_PX", "Flag")
 
         open[Flag == 5, Flag := "IndicativeOpen"][Flag == 0, Flag := "DailyOpen"]
 
-        open.info <- str_match_all(open.info, "75=([^,]*),52=([^,]*),60=([^,]*),")
+        open.info <- str_match_all(open.info, "75=([^,]*),34=([^,]*),52=([^,]*),60=([^,]*),")
         open.info <- as.data.table(do.call(rbind, open.info))[, -1]
-        names(open.info)[c(1:3)] <- c("Date", "SendingTime", "TransactTime")
+        names(open.info)[c(1:4)] <- c("Date","MsgSeq", "SendingTime", "TransactTime")
 
         open$Seq <- as.numeric(open$Seq)
 
@@ -477,15 +477,15 @@ statistics <- function(input, date) {
         settle <- str_match_all(SETTLE, "269=6,55=([^,]*),83=([^,]*),270=([^,]*),")
 
         n_row <- sapply(settle, nrow)
-        settle.info <- unlist(str_extract_all(SETTLE, "75=([^,]*),52=([^,]*),60=([^,]*),"))
+        settle.info <- unlist(str_extract_all(SETTLE, "75=([^,]*),34=([^,]*),52=([^,]*),60=([^,]*),"))
         settle.info <- str_dup(settle.info, n_row)
         settle <- as.data.table(do.call(rbind, settle))[, -1]
         names(settle)[c(1:3)] <- c("Code", "Seq", "SETTLE_PX")
 
 
-        settle.info <- str_match_all(settle.info, "75=([^,]*),52=([^,]*),60=([^,]*),")
+        settle.info <- str_match_all(settle.info, "75=([^,]*),34=([^,]*),52=([^,]*),60=([^,]*),")
         settle.info <- as.data.table(do.call(rbind, settle.info))[, -1]
-        names(settle.info)[c(1:3)] <- c("Date", "SendingTime", "TransactTime")
+        names(settle.info)[c(1:4)] <- c("Date","MsgSeq", "SendingTime", "TransactTime")
 
         settle$Seq <- as.numeric(settle$Seq)
         settle$SETTLE_PX <- as.numeric(settle$SETTLE_PX)
@@ -503,15 +503,15 @@ statistics <- function(input, date) {
         high_px <- str_match_all(HIGH_PX, "269=7,55=([^,]*),83=([^,]*),270=([^,]*),")
 
         n_row <- sapply(high_px, nrow)
-        high_px.info <- unlist(str_extract_all(HIGH_PX, "75=([^,]*),52=([^,]*),60=([^,]*),"))
+        high_px.info <- unlist(str_extract_all(HIGH_PX, "75=([^,]*),34=([^,]*),52=([^,]*),60=([^,]*),"))
         high_px.info <- str_dup(high_px.info, n_row)
         high_px <- as.data.table(do.call(rbind, high_px))[, -1]
         names(high_px)[c(1:3)] <- c("Code", "Seq", "HIGH")
 
 
-        high_px.info <- str_match_all(high_px.info, "75=([^,]*),52=([^,]*),60=([^,]*),")
+        high_px.info <- str_match_all(high_px.info, "75=([^,]*),34=([^,]*),52=([^,]*),60=([^,]*),")
         high_px.info <- as.data.table(do.call(rbind, high_px.info))[, -1]
-        names(high_px.info)[c(1:3)] <- c("Date", "SendingTime", "TransactTime")
+        names(high_px.info)[c(1:4)] <- c("Date","MsgSeq", "SendingTime", "TransactTime")
 
         high_px$Seq <- as.numeric(high_px$Seq)
         high_px$HIGH <- as.numeric(high_px$HIGH)
@@ -529,15 +529,15 @@ statistics <- function(input, date) {
         low_px <- str_match_all(LOW_PX, "269=8,55=([^,]*),83=([^,]*),270=([^,]*),")
 
         n_row <- sapply(low_px, nrow)
-        low_px.info <- unlist(str_extract_all(LOW_PX, "75=([^,]*),52=([^,]*),60=([^,]*),"))
+        low_px.info <- unlist(str_extract_all(LOW_PX, "75=([^,]*),34=([^,]*),52=([^,]*),60=([^,]*),"))
         low_px.info <- str_dup(low_px.info, n_row)
         low_px <- as.data.table(do.call(rbind, low_px))[, -1]
         names(low_px)[c(1:3)] <- c("Code", "Seq", "LOW")
 
 
-        low_px.info <- str_match_all(low_px.info, "75=([^,]*),52=([^,]*),60=([^,]*),")
+        low_px.info <- str_match_all(low_px.info, "75=([^,]*),34=([^,]*),52=([^,]*),60=([^,]*),")
         low_px.info <- as.data.table(do.call(rbind, low_px.info))[, -1]
-        names(low_px.info)[c(1:3)] <- c("Date", "SendingTime", "TransactTime")
+        names(low_px.info)[c(1:4)] <- c("Date","MsgSeq", "SendingTime", "TransactTime")
 
         low_px$Seq <- as.numeric(low_px$Seq)
         low_px$LOW <- as.numeric(low_px$LOW)
@@ -557,15 +557,15 @@ statistics <- function(input, date) {
                                   "269=N,55=([^,]*),83=([^,]*),270=([^,]*),")
 
         n_row <- sapply(high_bid, nrow)
-        high_bid.info <- unlist(str_extract_all(HIGH_BID, "75=([^,]*),52=([^,]*),60=([^,]*),"))
+        high_bid.info <- unlist(str_extract_all(HIGH_BID, "75=([^,]*),34=([^,]*),52=([^,]*),60=([^,]*),"))
         high_bid.info <- str_dup(high_bid.info, n_row)
         high_bid <- as.data.table(do.call(rbind, high_bid))[, -1]
         names(high_bid)[c(1:3)] <- c("Code", "Seq", "HIGH_BID")
 
 
-        high_bid.info <- str_match_all(high_bid.info, "75=([^,]*),52=([^,]*),60=([^,]*),")
+        high_bid.info <- str_match_all(high_bid.info, "75=([^,]*),34=([^,]*),52=([^,]*),60=([^,]*),")
         high_bid.info <- as.data.table(do.call(rbind, high_bid.info))[, -1]
-        names(high_bid.info)[c(1:3)] <- c("Date", "SendingTime", "TransactTime")
+        names(high_bid.info)[c(1:4)] <- c("Date","MsgSeq", "SendingTime", "TransactTime")
 
         high_bid$Seq <- as.numeric(high_bid$Seq)
         high_bid$HIGH_BID <- as.numeric(high_bid$HIGH_BID)
@@ -584,15 +584,15 @@ statistics <- function(input, date) {
                                    "269=O,55=([^,]*),83=([^,]*),270=([^,]*),")
 
         n_row <- sapply(low_offer, nrow)
-        low_offer.info <- unlist(str_extract_all(LOW_OFFER, "75=([^,]*),52=([^,]*),60=([^,]*),"))
+        low_offer.info <- unlist(str_extract_all(LOW_OFFER, "75=([^,]*),34=([^,]*),52=([^,]*),60=([^,]*),"))
         low_offer.info <- str_dup(low_offer.info, n_row)
         low_offer <- as.data.table(do.call(rbind, low_offer))[, -1]
         names(low_offer)[c(1:3)] <- c("Code", "Seq", "LOW_OFFER")
 
 
-        low_offer.info <- str_match_all(low_offer.info, "75=([^,]*),52=([^,]*),60=([^,]*),")
+        low_offer.info <- str_match_all(low_offer.info, "75=([^,]*),34=([^,]*),52=([^,]*),60=([^,]*),")
         low_offer.info <- as.data.table(do.call(rbind, low_offer.info))[, -1]
-        names(low_offer.info)[c(1:3)] <- c("Date", "SendingTime", "TransactTime")
+        names(low_offer.info)[c(1:4)] <- c("Date","MsgSeq", "SendingTime", "TransactTime")
 
         low_offer$Seq <- as.numeric(low_offer$Seq)
         low_offer$LOW_OFFER <- as.numeric(low_offer$LOW_OFFER)
@@ -610,15 +610,15 @@ statistics <- function(input, date) {
         volume <- str_match_all(VOLUME, "269=B,55=([^,]*),83=([^,]*),271=([^,]*),")
 
         n_row <- sapply(volume, nrow)
-        volume.info <- unlist(str_extract_all(VOLUME, "75=([^,]*),52=([^,]*),60=([^,]*),"))
+        volume.info <- unlist(str_extract_all(VOLUME, "75=([^,]*),34=([^,]*),52=([^,]*),60=([^,]*),"))
         volume.info <- str_dup(volume.info, n_row)
         volume <- as.data.table(do.call(rbind, volume))[, -1]
         names(volume)[c(1:3)] <- c("Code", "Seq", "VOLUME")
 
 
-        volume.info <- str_match_all(volume.info, "75=([^,]*),52=([^,]*),60=([^,]*),")
+        volume.info <- str_match_all(volume.info, "75=([^,]*),34=([^,]*),52=([^,]*),60=([^,]*),")
         volume.info <- as.data.table(do.call(rbind, volume.info))[, -1]
-        names(volume.info)[c(1:3)] <- c("Date", "SendingTime", "TransactTime")
+        names(volume.info)[c(1:4)] <- c("Date","MsgSeq", "SendingTime", "TransactTime")
 
         volume$Seq <- as.numeric(volume$Seq)
         volume$VOLUME <- as.numeric(volume$VOLUME)
@@ -638,15 +638,15 @@ statistics <- function(input, date) {
                                   "269=C,55=([^,]*),83=([^,]*),271=([^,]*),")
 
         n_row <- sapply(open_int, nrow)
-        open_int.info <- unlist(str_extract_all(OPEN_INT, "75=([^,]*),52=([^,]*),60=([^,]*),"))
+        open_int.info <- unlist(str_extract_all(OPEN_INT, "75=([^,]*),34=([^,]*),52=([^,]*),60=([^,]*),"))
         open_int.info <- str_dup(open_int.info, n_row)
         open_int <- as.data.table(do.call(rbind, open_int))[, -1]
         names(open_int)[c(1:3)] <- c("Code", "Seq", "OPEN_INT")
 
 
-        open_int.info <- str_match_all(open_int.info, "75=([^,]*),52=([^,]*),60=([^,]*),")
+        open_int.info <- str_match_all(open_int.info, "75=([^,]*),34=([^,]*),52=([^,]*),60=([^,]*),")
         open_int.info <- as.data.table(do.call(rbind, open_int.info))[, -1]
-        names(open_int.info)[c(1:3)] <- c("Date", "SendingTime", "TransactTime")
+        names(open_int.info)[c(1:4)] <- c("Date","MsgSeq", "SendingTime", "TransactTime")
 
         open_int$Seq <- as.numeric(open_int$Seq)
         open_int$OPEN_INT <- as.numeric(open_int$OPEN_INT)
@@ -666,16 +666,16 @@ statistics <- function(input, date) {
                                      "269=e,55=([^,]*),83=([^,]*),271=([^,]*),")
 
         n_row <- sapply(elec_volume, nrow)
-        elec_volume.info <- unlist(str_extract_all(ELEC_VOLUME, "75=([^,]*),52=([^,]*),60=([^,]*),"))
+        elec_volume.info <- unlist(str_extract_all(ELEC_VOLUME, "75=([^,]*),34=([^,]*),52=([^,]*),60=([^,]*),"))
         elec_volume.info <- str_dup(elec_volume.info, n_row)
         elec_volume <- as.data.table(do.call(rbind, elec_volume))[, -1]
         names(elec_volume)[c(1:3)] <- c("Code", "Seq", "ELEC_VOLUME")
 
 
         elec_volume.info <- str_match_all(elec_volume.info,
-                                          "75=([^,]*),52=([^,]*),60=([^,]*),")
+                                          "75=([^,]*),34=([^,]*),52=([^,]*),60=([^,]*),")
         elec_volume.info <- as.data.table(do.call(rbind, elec_volume.info))[, -1]
-        names(elec_volume.info)[c(1:3)] <- c("Date", "SendingTime", "TransactTime")
+        names(elec_volume.info)[c(1:4)] <- c("Date","MsgSeq", "SendingTime", "TransactTime")
 
         elec_volume$Seq <- as.numeric(elec_volume$Seq)
         elec_volume$ELEC_VOLUME <- as.numeric(elec_volume$ELEC_VOLUME)
@@ -703,13 +703,13 @@ statistics <- function(input, date) {
         )
 
         n_row <- sapply(limit, nrow)
-        limit.info <- unlist(str_extract_all(LIMIT, "75=([^,]*),52=([^,]*),60=([^,]*),"))
+        limit.info <- unlist(str_extract_all(LIMIT, "75=([^,]*),34=([^,]*),52=([^,]*),60=([^,]*),"))
         limit.info <- str_dup(limit.info, n_row)
         limit <- as.data.table(do.call(rbind, limit))[, -1]
         names(limit)[c(1:5)] <- c("Code", "Seq", "high_limit", "low_limit", "variation")
 
 
-        limit.info <- str_match_all(limit.info, "75=([^,]*),52=([^,]*),60=([^,]*),")
+        limit.info <- str_match_all(limit.info, "75=([^,]*),34=([^,]*),52=([^,]*),60=([^,]*),")
         limit.info <- as.data.table(do.call(rbind, limit.info))[, -1]
         names(limit.info)[c(1:3)] <- c("Date", "SendingTime", "TransactTime")
 
