@@ -99,7 +99,12 @@ status <- function(input, date) {
       setkey(Index1, Code, SessionID, Seq)
 
       Session_info <- Index1
-      Session_info <-Session_info[, .SD[1], by=.(Code, SessionID)]
+      Session_info[, Time:=as.POSIXct(Time, tz='GMT', '%Y%m%d%H%M%S')]
+      attr(Session_info$Time, 'tzone') <- 'America/Chicago'
+      Session_info[, hour_index := hour(Time)]
+      Session_info[, session:=fifelse(hour_index%between%c(8, 13), 'day', 'night')]
+      Session_info <-Session_info[, .SD[1], by=.(Code, session, SessionID)][, -c("session", "hour_index")]
+      setkey(Session_info, Code, Seq)
 
 
     }
