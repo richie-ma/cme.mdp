@@ -5,18 +5,24 @@
 \title{Reconstruct limit order book(s) from the quote messages extracted from the CME Market by Price data}
 \usage{
 order_book(
-  mbp_quote_msgs_list,
+  mdp_quote_msgs_list,
   level = NULL,
   consolidate = TRUE,
+  sunday_input = NULL,
   security = NULL
 )
 }
 \arguments{
-\item{mbp_quote_msgs_list}{A list of quote messages extracted from the MBP data using `quote_messages()`, which must \bold{include} Sunday's file.}
+\item{mdp_quote_msgs_list}{A list of quote messages extracted from the MBP data using `quote_messages()`, which must \bold{include} Sunday's file.}
 
-\item{level}{The maximum book depth that can be supported by the CME, which could be 5 or 10 for futures, 3 for options. Users can choose any levels below the maximum.}
+\item{level}{The maximum book depth that can be supported by the CME, which could be 5 or 10 for futures, 3 for options.
+When it is not provided, the nearest Sunday's (not a national holiday)
+MBP/MBO data need to be provided to extract the default depth.}
 
 \item{consolidate}{If \code{TRUE} (default), return the consolidated order book.}
+
+\item{sunday_input}{When \code{level} is not provided, the nearest Sunday's (not a national holiday)
+MBP/MBO data need to be provided to extract the default depth.}
 
 \item{security}{A symbol of a single contract of a financial security or a vector of multiple single contracts, should be
 in the format like "CLK9" (crude oil), "ESH9" (E-mini S&P 500), etc. These can
@@ -60,8 +66,6 @@ The consolidated LOB can be reconstructed according to timestamps or sequence nu
 If a book depth that exists in the outright book, the quantity of implied book is added to the outright book to reconstruct the
 consolidated book. When a book depth of implied book is better than the outright book, this depth for the consolidated LOB is the one at implied book
 and one should move book depths behind this level in the outright LOB backward. Consolidated book is the one that traders monitor during trading.
-
-This code does not need explicit loops, which substantially improves the speed of processing.
 }
 
 \section{Level of limit order book}{
@@ -75,8 +79,10 @@ One should reconstruct the limit order book with the maximum book depth stipulat
 # Know book depth
 \dontrun{
 book <- order_book(weekly_msg_quotes_list, "2019-01-07", level = 10)
-}
 
+# Unknown book depth
+book <- order_book(weekly_msg_quotes_list, "2019-01-07", level = 10, sunday_input = sunday_file)
+}
 }
 \seealso{
 [quote_message()]

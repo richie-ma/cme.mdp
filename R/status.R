@@ -29,7 +29,7 @@
 #' }
 #'
 status <- function(input, date) {
-  SessionID <- Code <- Seq <- MsgSeq <- session <- TradingStatus <- TradingEvent <- NULL
+  SessionID <- Code <- Seq <- MsgSeq <- session <- TradingStatus <- TradingEvent <- Time <- hour_index <- NULL
   date <- as.Date(date)
 
   if (inherits(date, "Date") == FALSE) {
