@@ -465,6 +465,8 @@ order_book <- function(mdp_quote_msgs_list,
       cat("Outright limit order book start...\n")
       LOB_outright <- book1(message_outright, level)
 
+    }else{
+      LOB_outright <- NULL
     }
 
 
@@ -477,6 +479,8 @@ order_book <- function(mdp_quote_msgs_list,
       LOB_implied <- book1(message_implied, 2)
       LOB_implied <- LOB_implied[, -c(7, 10, 13, 16)]
 
+    }else{
+      LOB_implied <- NULL
     }
 
     #rm(message_implied, message_outright)
@@ -811,7 +815,7 @@ order_book <- function(mdp_quote_msgs_list,
 
     }
 
-    if (exists("LOB_outright")) {
+    if (exists("LOB_outright", inherits = FALSE) && !is.null(LOB_outright)) {
       LOB_outright$Seq <- message_outright[, "Seq"]
       LOB_outright$MsgSeq <- message_outright[, "MsgSeq"]
       LOB_outright$SendingTime <- message_outright[, "SendingTime"]
@@ -824,7 +828,7 @@ order_book <- function(mdp_quote_msgs_list,
 
     }
 
-    if (exists("LOB_implied")) {
+    if (exists("LOB_implied", inherits = FALSE) && !is.null(LOB_implied)) {
       LOB_implied$Seq <- message_implied[, "Seq"]
       LOB_implied$MsgSeq <- message_implied[, "MsgSeq"]
       LOB_implied$SendingTime <- message_implied[, "SendingTime"]
