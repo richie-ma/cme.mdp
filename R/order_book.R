@@ -490,16 +490,16 @@ order_book <- function(mdp_quote_msgs_list,
     if (isTRUE(consolidate)) {
       cat("Consolidated limit order book start...\n")
 
-      if ((exists("LOB_outright") == TRUE) &
-          (exists("LOB_implied") == FALSE)) {
+      if (!is.null(LOB_outright) &&
+          is.null(LOB_implied)) {
         LOB_conso <- as.data.table(LOB_outright)
         LOB_implied <- NULL
         cat(
           "No implied orders and the consolidated limit order book is the same as the outright limit order book\n"
         )
 
-      } else if ((exists("LOB_outright") == FALSE) &
-                 (exists("LOB_implied") == TRUE)) {
+      } else if (is.null(LOB_outright) &&
+                 !is.null(LOB_implied)) {
         LOB_conso <- as.data.table(LOB_implied)
         LOB_outright <- NULL
         cat(
